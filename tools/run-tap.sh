@@ -10,7 +10,7 @@
 #   DISPLAY_NUM  X display to use (default 99). An Xvfb is started if needed.
 #   ROM          48K ROM file (default /usr/share/spectrum-roms/48.rom)
 #   SHOT_DIR     directory for timestamped screenshots (default /tmp/zx-course-shots)
-#   SECONDS      how long to capture after LOAD (default 30)
+#   CAPTURE_SECS  how long to capture after LOAD, in seconds (default 30)
 
 set -euo pipefail
 
@@ -20,7 +20,7 @@ TAP="${SRC%.bas}.tap"
 ROM="${ROM:-/usr/share/spectrum-roms/48.rom}"
 DISPLAY_NUM="${DISPLAY_NUM:-99}"
 SHOT_DIR="${SHOT_DIR:-/tmp/zx-course-shots}"
-SECONDS="${SECONDS:-30}"
+CAPTURE_SECS="${CAPTURE_SECS:-30}"
 
 command -v zmakebas >/dev/null
 command -v fuse >/dev/null
@@ -64,8 +64,8 @@ sleep 0.5
 xdotool key --window "$WID" --delay 150 Return
 
 mkdir -p "$SHOT_DIR"
-echo "Capturing $SECONDS seconds of screenshots to $SHOT_DIR"
-for i in $(seq -w 0 "$SECONDS"); do
+echo "Capturing $CAPTURE_SECS seconds of screenshots to $SHOT_DIR"
+for i in $(seq -w 0 "$CAPTURE_SECS"); do
   sleep 1
   if ! ps -p "$(cat /tmp/zx-course-fuse.pid)" >/dev/null; then
     echo "Fuse exited at t=$i"
