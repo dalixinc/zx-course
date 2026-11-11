@@ -23,13 +23,20 @@ Checkpoint: you can point to a pixel or a character cell and say where its bits 
 
 ## Part 2 — BASIC, building up to a tiny game
 
-Clear BASIC programs, each one tested, each one adding a little, until there is a small game.
+Clear BASIC programs, each one tested, each one adding a little, until there is a small game. The notes and listings live in [chapter-01-the-machine](chapter-01-the-machine/) (the machine itself) and [chapter-02-bat-and-ball](chapter-02-bat-and-ball/) (the game).
 
-1. First programs: `PRINT`, `BORDER`, `INK`, `PAPER`, `BEEP`, and getting a listing in and out of the emulator.
-2. Variables, `INPUT`, `IF`, `FOR`, `GOSUB`.
-3. `INKEY$` and `PRINT AT`: moving something on the screen.
-4. Graphics as needed: `PLOT`, `DRAW`, and user-defined graphics if the game wants them.
-5. A tiny BASIC game, built in steps and tested at each step. Planned target: a small bat-and-ball (one bat, a ball, a few bricks or a wall, a score). Easy to swap for something else if you'd rather.
+The bat-and-ball game in Chapter 2 is built in these steps, each one tested before the next:
+
+1. A bouncing ball (`PRINT AT`).
+2. A bat you move with `INKEY$` (O left, P right).
+3. A wall of coloured bricks, with hits detected by `ATTR`.
+4. A user-defined graphic for the ball.
+5. A little random deflection on the bounce, so the path is not always a perfect diagonal.
+6. `BEEP` sounds: a lower pitch when the ball hits the bat, a higher pitch when it hits a wall or a brick.
+
+Score and lives can come later, after these six steps.
+
+The earlier BASIC ideas — `PRINT`, `BORDER`, `INK`, `PAPER`, variables, `IF`, `FOR`, and so on — are taught in the steps as they are needed, rather than as a separate first pass.
 
 The slowness of BASIC animation is useful here: it is why Parts 3 and 4 exist.
 

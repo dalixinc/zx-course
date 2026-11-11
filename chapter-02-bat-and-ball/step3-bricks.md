@@ -2,13 +2,13 @@
 
 This is the third step of the tiny bat-and-ball game. Step 2 added a bat you move with O and P, and the ball bounced off it or restarted at the top on a miss. This step puts a wall of coloured bricks near the top, teaches how PAPER colour is stored in the attribute byte, and uses that colour as the collision test.
 
-There are three rows of bricks, on rows 2, 3 and 4. Each row is a different PAPER colour: red, green and yellow. Each character cell is one brick, drawn as a space with that paper colour — a solid block, with no user-defined graphic. (A later lesson will replace the ball's letter `O` with a UDG; the bricks stay as coloured spaces for now.)
+There are three rows of bricks, on rows 2, 3 and 4. Each row is a different PAPER colour: red, green and yellow. Each character cell is one brick, drawn as a space with that paper colour — a solid block, with no user-defined graphic. (The next step will replace the ball's letter `O` with a UDG; the bricks stay as coloured spaces for now.)
 
-When the ball is about to move into a cell, the program reads that cell's attribute with `ATTR`. If the paper colour is not black, there is a brick there. The brick is rubbed out (the cell is printed as a space with black paper) and `DR` is reversed, so the ball bounces. There is no separate list of brick positions: the colours on the screen *are* the map. Score, lives and `BEEP` come in the next step.
+When the ball is about to move into a cell, the program reads that cell's attribute with `ATTR`. If the paper colour is not black, there is a brick there. The brick is rubbed out (the cell is printed as a space with black paper) and `DR` is reversed, so the ball bounces. There is no separate list of brick positions: the colours on the screen *are* the map. `BEEP` sounds come in a later step of this chapter; score and lives can come after that.
 
 The bat also gains a little steering. If the ball hits the left-hand end, `DX` is set to `-1`; if it hits the right-hand end, `DX` is set to `+1`; if it hits one of the two middle cells, `DX` is left alone. You can already send the ball up to a chosen part of the wall.
 
-The colour numbers and the layout of the attribute byte are in [colour-reference.md](colour-reference.md), and were introduced in [Lesson 1](01-the-machine.md). This step is where they start to do work in a program.
+The colour numbers and the layout of the attribute byte are in [colour-reference.md](../colour-reference.md), and were introduced in [Chapter 1](../chapter-01-the-machine/). This step is where they start to do work in a program.
 
 Every program is tested in a 48K emulator before it is shown.
 
@@ -36,7 +36,7 @@ The outer loop walks the brick rows in `L`, from 2 to 4. For each row, the inner
 
 A space has no ink pixels, so what you see is the paper colour. `PRINT AT 2,0; PAPER 2;" "` paints one cell solid red, and writes that colour into the attribute file. The permanent paper is still black, so the ball and the empty playfield stay white on black.
 
-The three rows use `P=2*(L-1)`: row 2 gets paper 2 (red), row 3 gets paper 4 (green), row 4 gets paper 6 (yellow). Those values are in the [colour reference](colour-reference.md).
+The three rows use `P=2*(L-1)`: row 2 gets paper 2 (red), row 3 gets paper 4 (green), row 4 gets paper 6 (yellow). Those values are in the [colour reference](../colour-reference.md).
 
 ```
 10 PRINT AT 2,0; PAPER 2;" "
@@ -123,7 +123,7 @@ The ball still starts at row 5, column 5, just under the wall, and goes down fir
 420 GO TO 210
 ```
 
-The source is `02-bricks.bas`. A tape image ready to load is `02-bricks.tap`.
+The source is `step3-bricks.bas`. A tape image ready to load is `step3-bricks.tap`.
 
 ## Line by line
 
@@ -154,9 +154,9 @@ The hit test looks at the single cell the ball is about to enter, `ATTR(R+DR,X+D
 
 `INKEY$` is still read only once per loop, after the delay, so you should hold O or P to steer, as in step 2.
 
-A screenshot taken just after a yellow brick was cleared, with the ball bouncing off it, is in `02-bricks-screenshot.png`.
+A screenshot taken just after a yellow brick was cleared, with the ball bouncing off it, is in `step3-bricks.png`.
 
-To run it yourself: start a 48K emulator, load `02-bricks.tap`, and type `LOAD ""`. The program auto-starts at line 10 (the last of the remarks; the first statement is line 20) and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). Hold O to move left and P to move right, and try to catch the ball on the left end, the middle, or the right end to see the angle change. The helper script `tools/run-tap.sh 02-bricks.bas` builds the tape and runs it in Fuse under Xvfb. To send keys while it captures, see `tools/README.md`.
+To run it yourself: start a 48K emulator, load `step3-bricks.tap`, and type `LOAD ""`. The program auto-starts at line 10 (the last of the remarks; the first statement is line 20) and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). Hold O to move left and P to move right, and try to catch the ball on the left end, the middle, or the right end to see the angle change. The helper script `tools/run-tap.sh chapter-02-bat-and-ball/step3-bricks.bas` (from the course root) builds the tape and runs it in Fuse under Xvfb. To send keys while it captures, see [tools/README.md](../tools/README.md).
 
 ## Try this
 

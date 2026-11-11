@@ -1,8 +1,8 @@
 # Lesson 2 — A bouncing ball (bat-and-ball, step 1)
 
-This is the first step of the tiny bat-and-ball game in Part 2 of the course. The finished game will have a ball, a bat you move, a row of bricks, a score and lives. We will build it in four steps, and test each one before going on.
+This is the first step of the tiny bat-and-ball game in Part 2 of the course. The rest of this chapter builds the game in six steps: the ball, a bat you move, a wall of bricks, a user-defined graphic for the ball, a little random deflection on the bounce, and `BEEP` sounds. Score and lives can come later. The [chapter index](README.md) lists the steps. We test each one before going on.
 
-In this step there is no bat and no bricks. The only job is to get a ball moving diagonally with `PRINT AT`, to bounce it off all four edges of the main screen, and to rub out its old position as it goes. The later steps add a bat moved with `INKEY$`, bouncing off the bat and the bricks, then score, lives, `BEEP` and game over.
+In this step there is no bat and no bricks. The only job is to get a ball moving diagonally with `PRINT AT`, to bounce it off all four edges of the main screen, and to rub out its old position as it goes. The later steps add a bat moved with `INKEY$`, a wall of bricks, a user-defined graphic for the ball, a little randomness in the bounce, and `BEEP` sounds.
 
 Every program is tested in a 48K emulator before it is shown.
 
@@ -144,7 +144,7 @@ The ball is the letter `O`, so there is no need for a user-defined graphic. It s
 130 GO TO 40
 ```
 
-The source is `02-ball.bas`. A tape image ready to load is `02-ball.tap`.
+The source is `step1-ball.bas`. A tape image ready to load is `step1-ball.tap`.
 
 ## Line by line
 
@@ -161,9 +161,9 @@ The source is `02-ball.bas`. A tape image ready to load is `02-ball.tap`.
 
 If the ball hits a corner, both `DR` and `DX` reverse, and it comes back the way it came. That is the right thing for a corner.
 
-A screenshot taken while it is running is in `02-screenshot.png`.
+A screenshot taken while it is running is in `step1-ball.png`.
 
-To run it yourself: start a 48K emulator, load `02-ball.tap`, and type `LOAD ""`. The program auto-starts at line 10 and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). The helper script `tools/run-tap.sh 02-ball.bas` builds the tape and runs it in Fuse under Xvfb.
+To run it yourself: start a 48K emulator, load `step1-ball.tap`, and type `LOAD ""`. The program auto-starts at line 10 and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). The helper script `tools/run-tap.sh chapter-02-bat-and-ball/step1-ball.bas` (from the course root) builds the tape and runs it in Fuse under Xvfb.
 
 ## Try this
 

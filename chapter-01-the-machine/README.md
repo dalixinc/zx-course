@@ -79,7 +79,7 @@ The bits of each attribute byte are:
 - BRIGHT (bit 6) makes both INK and PAPER the bright version of that colour, except that black stays black.
 - FLASH (bit 7) swaps INK and PAPER several times a second.
 
-The eight colours are: 0 black, 1 blue, 2 red, 3 magenta, 4 green, 5 cyan, 6 yellow, 7 white. A one-page table of INK and PAPER values, including how PAPER sits in the attribute byte, is in [colour-reference.md](colour-reference.md).
+The eight colours are: 0 black, 1 blue, 2 red, 3 magenta, 4 green, 5 cyan, 6 yellow, 7 white. A one-page table of INK and PAPER values, including how PAPER sits in the attribute byte, is in [colour-reference.md](../colour-reference.md).
 
 One limitation follows from this design: every 8×8 cell can have only two colours (plus bright and flash). Two different INK colours cannot share a cell. That is attribute clash. We will meet it again when we start to move graphics.
 
@@ -121,4 +121,4 @@ Line by line:
 
 A screenshot taken partway through is in `01-screenshot.png`. It shows the top third after the first pixel-line of each character row has been drawn, and the second pixel-line has started: eight coloured bars (blue, red, magenta, green, cyan, yellow, white, blue) with gaps between them. The middle and bottom thirds are still black. That is address order, not top-to-bottom order.
 
-To run it yourself: start a 48K emulator, load `01-fill.tap`, and type `LOAD ""`. The program auto-starts at line 10. The fill takes a little while; that slowness is the point. There is also a helper script, `tools/run-tap.sh`, which builds the tape and runs it in Fuse under Xvfb.
+To run it yourself: start a 48K emulator, load `01-fill.tap`, and type `LOAD ""`. The program auto-starts at line 10. The fill takes a little while; that slowness is the point. There is also a helper script, [`tools/run-tap.sh`](../tools/README.md), which builds the tape and runs it in Fuse under Xvfb: from the course root, `tools/run-tap.sh chapter-01-the-machine/01-fill.bas`.

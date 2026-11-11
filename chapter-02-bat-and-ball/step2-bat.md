@@ -4,7 +4,7 @@ This is the second step of the tiny bat-and-ball game in Part 2 of the course. S
 
 The keys are **O** for left and **P** for right. That is the usual convention on the Spectrum (the two keys sit together on the bottom row, under the right hand). Both lowercase and capitals work.
 
-If the ball reaches the bottom and is over the bat, it bounces up. If it misses, it is sent back to its starting place at the top and starts again. That is the simpler of the two obvious choices (the other was to bounce off the bottom anyway, which would have made a miss look the same as a hit). Lives, a score, `BEEP` and game over come in a later step; a miss will mean more then. The next step after this one adds a row of bricks.
+If the ball reaches the bottom and is over the bat, it bounces up. If it misses, it is sent back to its starting place at the top and starts again. That is the simpler of the two obvious choices (the other was to bounce off the bottom anyway, which would have made a miss look the same as a hit). The next step adds a row of bricks. A later step adds `BEEP` sounds; score and lives can come after that. A miss will mean more then.
 
 The ball now uses rows 0 to 20, so it does not print on top of the bat. The bat lives on row 21, is four characters wide, and is drawn as four inverse spaces — a solid bar. `INVERSE` in a `PRINT` list was covered in step 1.
 
@@ -97,7 +97,7 @@ The old ball is rubbed out with a space, as before. The bat is rubbed out and re
 220 GO TO 40
 ```
 
-The source is `02-bat.bas`. A tape image ready to load is `02-bat.tap`.
+The source is `step2-bat.bas`. A tape image ready to load is `step2-bat.tap`.
 
 ## Line by line
 
@@ -130,9 +130,9 @@ The ball still flickers, because it is printed, delayed, and then rubbed out. Th
 
 `INKEY$` is looked at only once per loop, after the delay, so a very short tap can be missed. Hold O or P to steer. It also reads only one key at a time, so there is no diagonal "two keys at once" to worry about here, but the same limit will matter later if you want more than left and right.
 
-A screenshot taken while the ball is about to meet the bat is in `02-bat-screenshot.png`.
+A screenshot taken while the ball is about to meet the bat is in `step2-bat.png`.
 
-To run it yourself: start a 48K emulator, load `02-bat.tap`, and type `LOAD ""`. The program auto-starts at line 10 and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). Hold O to move left and P to move right. The helper script `tools/run-tap.sh 02-bat.bas` builds the tape and runs it in Fuse under Xvfb. To send keys while it captures, see `tools/README.md` (`KEY_HOLD=p` holds P, for example).
+To run it yourself: start a 48K emulator, load `step2-bat.tap`, and type `LOAD ""`. The program auto-starts at line 10 and runs until you break it (on a real machine, Caps Shift and Space; in Fuse, often F4 or the menu). Hold O to move left and P to move right. The helper script `tools/run-tap.sh chapter-02-bat-and-ball/step2-bat.bas` (from the course root) builds the tape and runs it in Fuse under Xvfb. To send keys while it captures, see [tools/README.md](../tools/README.md) (`KEY_HOLD=p` holds P, for example).
 
 ## Try this
 

@@ -5,9 +5,7 @@ A hands-on course in ZX Spectrum programming, built by Dalix with Quintus (Grok 
 Every program is tested in the Fuse emulator (48K) before it is committed.
 
 - [Course outline](OUTLINE.md)
-- [Lesson 1: The machine](01-the-machine.md)
-- [Lesson 2: A bouncing ball (bat-and-ball, step 1)](02-bouncing-ball.md)
-- [Lesson 2, step 2: A bat you can move](02-step2-bat.md)
-- [Lesson 2, step 3: Coloured bricks](02-step3-bricks.md)
+- [Chapter 1: The machine](chapter-01-the-machine/)
+- [Chapter 2: Bat and ball](chapter-02-bat-and-ball/)
 - [Colour reference](colour-reference.md)
 - [Test tools](tools/README.md)

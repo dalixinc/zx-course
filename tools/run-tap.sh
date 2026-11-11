@@ -4,7 +4,7 @@
 #
 # Usage:
 #   tools/run-tap.sh [listing.bas]
-# Default listing: 01-fill.bas in the course root.
+# Default listing: chapter-01-the-machine/01-fill.bas in the course root.
 #
 # Environment:
 #   DISPLAY_NUM  X display to use (default 99). An Xvfb is started if needed.
@@ -27,7 +27,18 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SRC="${1:-$ROOT/01-fill.bas}"
+if [ -n "${1:-}" ]; then
+  if [ -f "$1" ]; then
+    SRC="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+  elif [ -f "$ROOT/$1" ]; then
+    SRC="$ROOT/$1"
+  else
+    echo "Listing not found: $1" >&2
+    exit 1
+  fi
+else
+  SRC="$ROOT/chapter-01-the-machine/01-fill.bas"
+fi
 TAP="${SRC%.bas}.tap"
 ROM="${ROM:-/usr/share/spectrum-roms/48.rom}"
 DISPLAY_NUM="${DISPLAY_NUM:-99}"
