@@ -6,7 +6,7 @@ A tiny bat-and-ball game in Sinclair BASIC, built in steps and tested in a 48K e
 2. [A bat you can move](step2-bat.md) — `step2-bat.bas` / `step2-bat.tap`
 3. [Coloured bricks](step3-bricks.md) — `step3-bricks.bas` / `step3-bricks.tap`
 4. [A user-defined graphic for the ball](step4-udg-ball.md) — `step4-udg-ball.bas` / `step4-udg-ball.tap`
-5. A little random deflection on the bounce (planned)
+5. [A little random deflection](step5-random.md) — `step5-random.bas` / `step5-random.tap`
 6. `BEEP` sounds: a lower pitch for the bat, a higher pitch for a wall or a brick (planned)
 
 Score and lives can come later, after these six steps.
