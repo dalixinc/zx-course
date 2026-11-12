@@ -33,8 +33,7 @@ The bat-and-ball game in Chapter 2 is built in these steps, each one tested befo
 4. A user-defined graphic for the ball.
 5. A little random deflection on the bounce, so the path is not always a perfect diagonal.
 6. `BEEP` sounds: a lower pitch when the ball hits the bat, a higher pitch when it hits a wall or a brick.
-
-Score and lives can come later, after these six steps.
+7. Score, lives, game over, and a win when the wall is cleared.
 
 The earlier BASIC ideas — `PRINT`, `BORDER`, `INK`, `PAPER`, variables, `IF`, `FOR`, and so on — are taught in the steps as they are needed, rather than as a separate first pass.
 
