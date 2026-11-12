@@ -1,6 +1,35 @@
 # Windows tools
 
-Windows builds of the tools used in this course, so you can `git pull` and use them locally. Linux setup will be revisited later.
+Windows builds of the tools used in this course, so you can `git pull` and use them locally. Linux setup will be revisited later. On Linux, `tools/build.sh` is the counterpart of the script below; it uses the packages you install with apt. See `tools/README.md`.
+
+## Building a tape: build.bat
+
+From the course folder (the one with `README.md` in it):
+
+```
+windows-tools\build.bat file.asm
+windows-tools\build.bat file.bas
+windows-tools\build.bat file.bas NAME 10
+windows-tools\build.bat driver.bas code.asm
+windows-tools\build.bat file.asm nofuse
+```
+
+- A `.asm` file is assembled with `pasmo --tapbas` to `file.tap`.
+- A `.bas` file is converted with zmakebas to `file.tap`. `NAME` is the name shown on the tape (default: the file's name, cut to 10 characters). The optional `LINE` is the auto-start line (default: 10).
+- A `.bas` driver followed by a `.asm` file is how Chapter 3 step 5 builds `step5-examples.tap`: zmakebas writes the driver, pasmo `--tap` writes the code with no loader, and `copy /b` joins them, driver first. The combined tape is `driver.tap`. The two halves are kept as `driver-driver.tap` and `code-code.tap` so you can inspect them.
+- Add `-n` or `nofuse` anywhere on the line to build the tape without opening Fuse.
+
+The script finds pasmo, zmakebas and Fuse next to itself, so it also works if you run it from another folder, or by a full path. The tape is written next to the source file.
+
+Fuse 1.6.0 treats a `.tap` on the command line the same way as File, Open. Auto-load is on by default, so the emulator's "phantom typist" types `LOAD ""` (or `LOAD "" CODE` if the first block is a CODE file) and the program starts. The script also passes `--machine 48`, so you get a 48K Spectrum even if Fuse last ran as a 128K. If Fuse cannot open an audio device, set `FUSE_FLAGS=--no-sound`. You can still type `LOAD ""` yourself if auto-load has been turned off in Fuse's options.
+
+Examples, from the course folder:
+
+```
+windows-tools\build.bat chapter-03-machine-code\step5-routines.asm
+windows-tools\build.bat chapter-01-the-machine\01-fill.bas fill 10
+windows-tools\build.bat chapter-03-machine-code\step5-examples.bas chapter-03-machine-code\step5-examples.asm examples 10
+```
 
 Each tool is in its own folder. The binaries are unzipped and ready to run. Licences are included next to them. The SHA-256 hashes below are of the official archives we downloaded, not of the unpacked files.
 
@@ -48,6 +77,6 @@ The 48K Spectrum emulator used to test every program in the course. This is the 
 - Source: https://sourceforge.net/projects/fuse-emulator/files/fuse/1.6.0/fuse-1.6.0.tar.gz
 - Licence: GPL (see `fuse/COPYING.txt`). Third-party library licences are in `fuse/3rd-party/` and `fuse/LICENSES.txt`.
 
-To try a tape, run `windows-tools\fuse\fuse.exe` and open the `.tap`, or drag the tape onto the window. On a 48K machine, type `LOAD ""` if it does not auto-load.
+The build script starts Fuse with the tape it wrote. You can also run `windows-tools\fuse\fuse.exe file.tap`, or open the `.tap` from File, Open, or drag it onto the window. On a 48K machine, type `LOAD ""` if it does not auto-load.
 
 The unpacked Fuse folder is about 6 MB of the 7 MB in `windows-tools/`. The zip it came from is 2.5 MB.

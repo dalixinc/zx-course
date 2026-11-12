@@ -7,6 +7,41 @@ Installed on this machine (Debian packages, 48K Spectrum):
 - **zmakebas** — text listing to `.tap`
 - **pasmo** and **z80asm** — Z80 assemblers
 
+## Building a tape: build.sh
+
+`tools/build.sh` is the Linux counterpart of `windows-tools/build.bat`. The usage is the same. It uses `pasmo`, `zmakebas` and `fuse` from PATH. If one is missing, it names the apt package to install (`pasmo`, `zmakebas`, `fuse-emulator-gtk` or `fuse-emulator-sdl`, and `spectrum-roms`).
+
+From the course folder:
+
+```
+tools/build.sh file.asm
+tools/build.sh file.bas
+tools/build.sh file.bas NAME 10
+tools/build.sh driver.bas code.asm
+tools/build.sh file.asm nofuse
+```
+
+- A `.asm` file is assembled with `pasmo --tapbas` to `file.tap`.
+- A `.bas` file is converted with zmakebas to `file.tap`. `NAME` is the name shown on the tape (default: the file's name, cut to 10 characters). The optional `LINE` is the auto-start line (default: 10).
+- A `.bas` driver followed by a `.asm` file is how Chapter 3 step 5 builds `step5-examples.tap`: zmakebas writes the driver, pasmo `--tap` writes the code with no loader, and `cat` joins them, driver first. The combined tape is `driver.tap`. The two halves are kept as `driver-driver.tap` and `code-code.tap` so you can inspect them.
+- Add `-n` or `nofuse` anywhere on the line to build the tape without opening Fuse.
+
+The tape is written next to the source file.
+
+Fuse 1.6.0 treats a `.tap` on the command line the same way as File, Open. Auto-load is on by default, so the emulator's "phantom typist" types `LOAD ""` (or `LOAD "" CODE` if the first block is a CODE file) and the program starts. The script does not pass a custom ROM, because Fuse will not auto-load when one is set. It also passes `--machine 48`, so you get a 48K Spectrum even if Fuse last ran as a 128K.
+
+If Fuse cannot open an audio device (for example on a headless machine), set `FUSE_FLAGS=--no-sound`.
+
+Examples:
+
+```
+tools/build.sh chapter-03-machine-code/step5-routines.asm
+tools/build.sh chapter-01-the-machine/01-fill.bas fill 10
+tools/build.sh chapter-03-machine-code/step5-examples.bas chapter-03-machine-code/step5-examples.asm examples 10
+```
+
+On Windows, use `windows-tools\build.bat`. See `windows-tools/README.md`.
+
 ## BASIC to tape, and a test run
 
 ```
@@ -22,7 +57,7 @@ To load and run it headless in Fuse under Xvfb, and take screenshots:
 tools/run-tap.sh chapter-01-the-machine/01-fill.bas
 ```
 
-Fuse's `--auto-load` does not type `LOAD ""` on this SDL build when started from a script, so the helper sends the keys: Enter (leave the copyright screen), `j` (the `LOAD` keyword), Alt+P twice (Symbol Shift+P, the quotes), and Enter. It then captures one screenshot a second of the Fuse window into `/tmp/zx-course-shots`.
+`run-tap.sh` also passes `--rom-48`, and Fuse 1.6.0 will not auto-load when a custom ROM is set (`tape_can_autoload()` in the source returns false). So the helper types the keys itself: Enter (leave the copyright screen), `j` (the `LOAD` keyword), Alt+P twice (Symbol Shift+P, the quotes), and Enter. (`tools/build.sh` does not pass a custom ROM, and lets Fuse's phantom typist do the typing.) It then captures one screenshot a second of the Fuse window into `/tmp/zx-course-shots`.
 
 The helper also takes a `.tap` instead of a `.bas`, and loads it as it is. That is how the pasmo tapes from Chapter 3 step 5 on are tested:
 
