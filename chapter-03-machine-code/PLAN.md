@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 5 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. Steps 1 to 6 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -73,7 +73,7 @@ All programs are tested in Fuse before they are shown, as usual.
 
 ## Steps
 
-Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 5 are written; the titles of the others are working titles.
+Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 6 are written; the titles of the others are working titles.
 
 The first draft of this plan had nine steps. The memory map and the system variables turned out to fit in one program, so the first two planned steps became step 1, and everything after moved up by one. The list below is the chapter as it is being written.
 
@@ -122,12 +122,12 @@ Steps 4 and 5 are the bridge: step 4 hand-assembles a first routine, and step 5 
 - **Program.** `step5-routines.asm`: step 4's three routines as source, built with `--tapbas`, the same 27 bytes. `step5-examples.asm`: sixteen tiny routines, example n at 50000+100*n, with a BASIC driver, `step5-examples.bas`, that calls each one and prints what came back.
 - **Tested.** pasmo and z80asm give the same bytes for both files. In Fuse: the `--tapbas` tape turns the border red as it loads, `PRINT USR 50000` gives 42, `USR 50004` gives 2, `RANDOMIZE USR 50012` fills the screen yellow. The driver printed every expected result (listed in the lesson).
 
-### Step 6 — The system variables, from machine code
+### Step 6 — The system variables, from machine code (written)
 
-- **Goal.** The twin of step 1. Read the same system variables from machine code, and print them with the ROM.
-- **New concepts.** `LD rr,(nn)` for a two-byte variable (`LD HL,(23730)` for `RAMTOP`); `LD A,(nn)` for a one-byte one; IY and why we leave it alone; calling the ROM: `RST 16` to print the character in A (opening channel 2 first with `LD A,2` / `CALL 5633`), and the ROM's number printing (to be checked in Fuse before it is taught, for example `CALL 6683` to print BC); a small machine-code "print a number" routine, if that is cleaner.
-- **Program.** A short routine that prints `PROG`, `VARS`, `STKEND`, `RAMTOP` and `FRAMES`, set beside step 1's BASIC version, so the two can be compared line for line.
-- **How we test.** Fuse: the numbers must match what step 1's BASIC `PEEK`s show on the same machine.
+- **Goal.** The twin of step 1. Read the same system variables from machine code, print them with the ROM, and compare the output, the way the program is put together, and the time with a BASIC version.
+- **New concepts.** `LD rr,(nn)` (HL, DE, BC) and `LD (nn),HL`; `LD A,(nn)` and `LD (nn),A`; `LD A,(DE)` and walking a table with `LD E,(HL)` / `INC HL`; `dw`; `RST 16`, channel 2 with `CALL 5633`, and the control codes for `AT`, `TAB` and `INVERSE` inside strings (ending in 255, because 0 appears in `AT 7,0`); `CALL` to the ROM (CLS at 3435); three ways to print a number: OUT-NUM-1 (6683, only up to 9999), STACK-BC + PRINT-FP (11563, 11747), and our own `pnum` by repeated subtraction; `SBC HL,DE`, `ADD HL,DE`, `AND A` to clear the carry. ROM addresses checked in Logan and O'Hara's *Complete Spectrum ROM Disassembly* (SkoolKit edition at speccy.xyz/rom) and against the bytes of the 48K ROM. IY left alone.
+- **Program.** `step6-sysvars.asm` (`--tapbas`): step 1's screen after `CLEAR 49999`, with a table-driven loop for the seven two-byte variables, then `CHARS`, `ATTR P`, `BORDCR`, `FRAMES` and `LAST K`, timed with `FRAMES`, ENTER to return. `step6-basic.bas`: the same screen in BASIC, with step 1's statements, timed the same way. `step6-examples.asm` + `step6-examples.bas`: thirteen small examples, including timings of the two number printers and of CLS.
+- **Tested.** pasmo and z80asm give the same bytes for both source files. Fuse, 48K: `PROG` 23755, `RAMTOP` 49999, `UDG` 65368, `P RAMT` 65535, `CHARS` 15360, `ATTR P` 7, `BORDCR` 7, `LAST K` 99 after `c`, all as in step 1; `VARS` 23826, `E LINE` 23827 (matching BASIC `PEEK`s afterwards), `STKEND` 23832, free 26167. The table took 12 frames in machine code (three runs) and 35 in BASIC: about three times as fast, because CLS (about 3 frames) and the ROM drawing characters take most of the time. 100 numbers: `pnum` 14 frames, PRINT-FP 49. OUT-NUM-1 printed 12345 as `<345` and 49999 as `0`.
 
 ### Step 7 — The attribute fill in machine code, timed
 
@@ -224,4 +224,4 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 6.
+The next lesson to write is step 7.
