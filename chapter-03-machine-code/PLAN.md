@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 4 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. Steps 1 to 5 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -73,9 +73,19 @@ All programs are tested in Fuse before they are shown, as usual.
 
 ## Steps
 
-Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 4 are written; the titles of the others are working titles.
+Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 5 are written; the titles of the others are working titles.
 
 The first draft of this plan had nine steps. The memory map and the system variables turned out to fit in one program, so the first two planned steps became step 1, and everything after moved up by one. The list below is the chapter as it is being written.
+
+From step 5 on, the machine-code steps mirror the BASIC steps, in the same order, so each BASIC program has a machine-code twin to set beside it, both for speed and for how the program is put together:
+
+| BASIC step | Machine-code twin |
+|------------|-------------------|
+| 1. The memory map and the system variables | 6. The system variables, read from machine code |
+| 2. Screen fills (attributes and bitmap), timed | 7. The attribute fill; 8. The bitmap fill |
+| 3. The interactive fill | 9. The interactive fill, now fast |
+
+Steps 4 and 5 are the bridge: step 4 hand-assembles a first routine, and step 5 brings in pasmo and the rest of the Z80 basics the later steps need.
 
 ### Step 1 — The memory map and the system variables (written)
 
@@ -105,30 +115,37 @@ The first draft of this plan had nine steps. The memory map and the system varia
 - **Program.** `step4-first-routine.bas`: `CLEAR 49999`, then 27 bytes poked from `DATA` into 50000 to 50026 and checked against a sum of 2110. Three routines: `LD BC,42` / `RET` (`PRINT USR 50000` gives 42); a red border that hands back its colour (`USR 50004` gives 2); and an attribute fill with a `DEC BC` / `LD A,B` / `OR C` / `JR NZ` loop, timed as 100 calls minus 100 calls of a lone `RET`.
 - **Tested.** Fuse, 48K, four runs: 42 and 2 printed, border red; 100 fills 96 frames, 100 empty calls 46 (once 47), so one fill is 0.5 frames, about 650 times as fast as step 2's 325. A mistyped byte gave `SUM IS 2109, NOT 2110` and stopped before any code ran. The bytes match pasmo's output for the same source, byte for byte.
 
-### Step 5 — Calling code: `CLEAR`, `DATA` / `POKE`, then an assembler
+### Step 5 — pasmo, and the Z80 basics (written)
 
-- **Goal.** The same "return 42" routine, first as hand-poked bytes (a recap of step 4), then as a source file assembled with pasmo, loaded from a tape that includes a BASIC loader.
-- **New concepts.** Origin addresses (`ORG 50000`); `pasmo --tapbas` (and `--bin` if we want the raw bytes); how the loader does `CLEAR` and `RANDOMIZE USR` (or `PRINT USR`).
-- **Program.** A few lines of assembler, the TAP that pasmo writes, and a short note on the BASIC loader it emits.
-- **How we test.** Assemble on this machine, load the TAP in Fuse, and get the same 42 as in step 4. If the loader's `CLEAR` is wrong, the machine will crash or the number will be wrong; that is a test, not a surprise.
+- **Goal.** Stop counting bytes by hand. Assemble with pasmo, read its listing, and load its `--tapbas` tape. Meet the rest of the Z80 basics the later steps need, gently, one tiny example each.
+- **New concepts.** Source files, labels, comments, `org`, `db`, `end`; `pasmo --tapbas`, `--tap`, `--bin`, `--name`, `-d` (the listing) and the symbol file; the loader pasmo writes (`CLEAR`, `POKE 23610,255`, `LOAD ""CODE`, `RANDOMIZE USR`); joining tapes (`cat` / `copy /b`). Registers A, F (Z and C only), B, C, D, E, H, L and the pairs BC, DE, HL; `LD` with registers, numbers, `(HL)` and `(nn)`; `ADD`, `SUB`, `INC`, `DEC`, `SCF`; `CP` with `JR` / `JP` on `Z`, `NZ`, `C`, `NC`; `DJNZ`; `CALL` / `RET`; `PUSH` / `POP`; `RLCA`, `RRCA`, `RLA`, `RRA`, `SLA`, `SRL`, with the bits and the carry shown in binary.
+- **Program.** `step5-routines.asm`: step 4's three routines as source, built with `--tapbas`, the same 27 bytes. `step5-examples.asm`: sixteen tiny routines, example n at 50000+100*n, with a BASIC driver, `step5-examples.bas`, that calls each one and prints what came back.
+- **Tested.** pasmo and z80asm give the same bytes for both files. In Fuse: the `--tapbas` tape turns the border red as it loads, `PRINT USR 50000` gives 42, `USR 50004` gives 2, `RANDOMIZE USR 50012` fills the screen yellow. The driver printed every expected result (listed in the lesson).
 
-### Step 6 — Fill the attributes with `LDIR`
+### Step 6 — The system variables, from machine code
 
-- **Goal.** A better attribute fill than step 4's loop: set every attribute byte to a value in A (or a value passed from BASIC), using `LD HL,nn` / `LD DE,nn` / `LD BC,nn` / `LDIR`.
-- **New concepts.** `LDIR` as a counted block copy (and why we seed the first byte, then copy 767 times); passing a colour from BASIC in BC (because of `USR`); contended memory, in outline, as the reason a cycle count will not match a wall clock exactly.
-- **Program.** Assembler, `ORG 50000`, called with `RANDOMIZE USR 50000` after a `POKE` or a `USR` argument that holds the attribute. A BASIC typist-friendly `DATA` version can sit beside it for anyone not yet using pasmo.
-- **How we test.** Fuse: the whole 32×24 grid changes colour, including the lower screen unless we choose not to fill the last two rows (a small design choice: 22 lines, or all 24). Time it with `FRAMES` around the `USR` call.
+- **Goal.** The twin of step 1. Read the same system variables from machine code, and print them with the ROM.
+- **New concepts.** `LD rr,(nn)` for a two-byte variable (`LD HL,(23730)` for `RAMTOP`); `LD A,(nn)` for a one-byte one; IY and why we leave it alone; calling the ROM: `RST 16` to print the character in A (opening channel 2 first with `LD A,2` / `CALL 5633`), and the ROM's number printing (to be checked in Fuse before it is taught, for example `CALL 6683` to print BC); a small machine-code "print a number" routine, if that is cleaner.
+- **Program.** A short routine that prints `PROG`, `VARS`, `STKEND`, `RAMTOP` and `FRAMES`, set beside step 1's BASIC version, so the two can be compared line for line.
+- **How we test.** Fuse: the numbers must match what step 1's BASIC `PEEK`s show on the same machine.
 
-### Step 7 — Fill the bitmap in machine code, and compare timings
+### Step 7 — The attribute fill in machine code, timed
 
-- **Goal.** Fill 16384–22527 in machine code, and put BASIC and machine-code times for both fills on the same page.
-- **New concepts.** The same `LDIR` idea over 6144 bytes; optional: a patterned fill (a stored byte, or a short unrolled pattern) so this is not only a solid ink.
-- **Program.** One tape that can run the BASIC fill and the machine-code fill, or two short programs with the same `FRAMES` stopwatch.
-- **How we test.** Fuse, `--speed 100`, `FRAMES` as in Chapter 2. Report both times, and the ratio to the step 2 figures (2468 and 325 frames). Do not invent a cycle-count "should be" figure and treat it as a measurement; contended memory will make a calculated time optimistic. The Fuse number is the one that goes in the lesson.
+- **Goal.** The twin of step 2's attribute fill. Step 4's loop, then `LDIR`, both timed with the same `FRAMES` method.
+- **New concepts.** `LDIR` as a counted block copy (seed the first byte, then copy 767 times, with HL one behind DE); passing the colour in from BASIC through the inbox byte (or in BC); contended memory, in outline, as the reason a cycle count will not match a wall clock exactly.
+- **Program.** Assembler, `org 50000`, called with `RANDOMIZE USR` after a `POKE` of the colour.
+- **How we test.** Fuse: the whole 32x24 grid changes colour (22 lines or all 24 is a small design choice). Time 100 calls minus 100 empty calls, as in step 4, for the loop and for `LDIR`, and set both beside step 2's 325 frames.
+
+### Step 8 — The bitmap fill in machine code, timed
+
+- **Goal.** The twin of step 2's bitmap fill. Fill 16384 to 22527 with a pattern byte, and put BASIC and machine-code times for both fills on the same page.
+- **New concepts.** The same `LDIR` idea over 6144 bytes; a fill that walks the screen line by line using the address bits, which is where the aside below comes in.
+- **Program.** A routine with the pattern byte passed from BASIC, and the `FRAMES` stopwatch.
+- **How we test.** Fuse, normal speed, `FRAMES` as in Chapter 2. Report the time and the ratio to step 2's 2468 frames. Do not invent a cycle-count "should be" figure and treat it as a measurement; the Fuse number is the one that goes in the lesson.
 
 #### For info (planned aside): why the screen is in thirds, and interleaved
 
-A plain-text aside in the step 7 lesson, set off from the main text, for readers who want to know why the bitmap is laid out so strangely. It is not needed for the fill itself, which writes every byte and does not care about the order, but it is what makes drawing in machine code easy in Chapter 4.
+A plain-text aside in the step 8 lesson, set off from the main text, for readers who want to know why the bitmap is laid out so strangely. It is not needed for the fill itself, which writes every byte and does not care about the order, but it is what makes drawing in machine code easy in Chapter 4.
 
 **The address bits.** A bitmap address, written as its high byte and its low byte, is:
 
@@ -188,11 +205,11 @@ Worked through: `$4000` (16384) gives `$5800` (22528); `$4020` (16416) gives `$5
 
 **Why it is laid out like this.** For the code: the common moves are one-byte, four-cycle instructions. `INC L` goes across, `INC H` goes down a pixel line, and drawing an 8-line character or sprite column is eight `INC H`s with no 16-bit add. Only the move into the next character row or third costs more, and that happens once every eight lines. For the hardware: the ULA works out the screen address from its own line and column counters, and the layout lets those counter bits go straight onto the address lines, with no adding. It also means the bitmap byte and the attribute byte for a cell share the same low byte, and the ULA fetches both for each cell as it draws the line. The exact hardware reason (often given as a saving in the ULA's logic, and a good fit for the DRAM's row and column addressing) should be checked against a reliable source, such as Chris Smith's book on the ZX Spectrum ULA, before the lesson states it as fact.
 
-### Step 8 — The interactive fill, now fast
+### Step 9 — The interactive fill, now fast
 
-- **Goal.** The step 3 program, with the machine-code fills underneath: pick an attribute and a bit pattern, see the screen change at once.
+- **Goal.** The twin of step 3. The step 3 program, with the machine-code fills underneath: pick an attribute and a bit pattern, see the screen change at once.
 - **New concepts.** A BASIC front end around `USR` calls; perhaps two entry points (attributes, bitmap) or one routine with a parameter in BC.
-- **Program.** The step 3 program, with its two fill subroutines replaced by `USR` calls to the routines from steps 6 and 7.
+- **Program.** The step 3 program, with its two fill subroutines replaced by `USR` calls to the routines from steps 7 and 8. BASIC asks the questions, machine code does the filling.
 - **How we test.** Fuse: the same choices as in step 3, now quick enough to try several in a row. A `FRAMES` reading around each fill, set beside the step 3 figures.
 
 ## What this chapter will not do yet
@@ -203,8 +220,8 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 
 1. Original Parts 3 and 4 are folded into Chapter 3. The Invaders-style game is Chapter 4, and the sprite engine is Chapter 5.
 2. Order: memory map and system variables first, then BASIC fills, then Z80.
-3. There is a slow interactive fill in BASIC (step 3), and a fast one at the end (step 8).
+3. There is a slow interactive fill in BASIC (step 3), and a fast one at the end (step 9).
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 5.
+The next lesson to write is step 6.

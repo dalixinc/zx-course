@@ -6,7 +6,15 @@ The memory map first, then screen fills in BASIC, then the same fills in Z80 mac
 2. [Screen fills in BASIC, timed](step2-fills.md) — `step2-fills.bas` / `step2-fills.tap`
 3. [An interactive fill in BASIC](step3-interactive-fill.md) — `step3-interactive-fill.bas` / `step3-interactive-fill.tap`
 4. [The Z80 in small pieces, and a first routine](step4-first-routine.md) — `step4-first-routine.bas` / `step4-first-routine.tap`
+5. [pasmo, and the Z80 basics](step5-pasmo-and-z80.md) — `step5-routines.asm` / `step5-routines.tap`, `step5-examples.asm` + `step5-examples.bas` / `step5-examples.tap`
 
-Steps 5 to 8, more machine code, will be added here as they are written and checked. The list is in [PLAN.md](PLAN.md).
+From step 6 on, each machine-code step is the twin of a BASIC step, in the same order, so the two can be compared for speed and for how the program is put together. They will be added here as they are written and checked:
+
+6. The system variables, from machine code (twin of step 1)
+7. The attribute fill in machine code, timed (twin of step 2)
+8. The bitmap fill in machine code, timed, with the screen-address aside (twin of step 2)
+9. The interactive fill, now fast (twin of step 3)
+
+The details are in [PLAN.md](PLAN.md).
 
 The colour numbers are in the [colour reference](../colour-reference.md). The screen layout and attributes are in [Chapter 1](../chapter-01-the-machine/). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md).
