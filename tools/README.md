@@ -15,22 +15,44 @@ From the course folder:
 
 ```
 tools/build.sh file.asm
+```
+
+```
 tools/build.sh file.bas
+```
+
+```
 tools/build.sh file.bas NAME 10
+```
+
+```
 tools/build.sh driver.bas code.asm
+```
+
+```
 tools/build.sh file.asm nofuse
 ```
 
-- A `.asm` file is assembled with `pasmo --tapbas` to `file.tap`.
-- A `.bas` file is converted with zmakebas to `file.tap`. `NAME` is the name shown on the tape (default: the file's name, cut to 10 characters). The optional `LINE` is the auto-start line (default: 10).
-- A `.bas` driver followed by a `.asm` file is how Chapter 3 step 5 builds `step5-examples.tap`: zmakebas writes the driver, pasmo `--tap` writes the code with no loader, and `cat` joins them, driver first. The combined tape is `driver.tap`. The two halves are kept as `driver-driver.tap` and `code-code.tap` so you can inspect them.
-- Add `-n` or `nofuse` anywhere on the line to build the tape without opening Fuse.
+What each form does, and how they differ:
+
+- `file.asm` assembles the source with `pasmo --tapbas` and writes `file.tap` next to it. The tape has a short BASIC loader around the machine code, so Fuse can `LOAD ""` and run it. Then Fuse opens.
+- `file.bas` converts the listing with zmakebas and writes `file.tap` next to it, then opens it in Fuse. With no extra arguments, the name stored on the tape is the file's name, cut to 10 characters, and the program auto-runs from line 10.
+- `file.bas NAME 10` is the same BASIC conversion, but you choose the tape name and the auto-run line:
+  - `NAME` is the program name stored on the tape. That is what `LOAD` shows as `Program: NAME`. It can be at most 10 characters, because that is the Spectrum's limit. If you leave it out, it defaults to the file's name, also cut to 10 characters.
+  - `LINE` is the auto-run line, the same idea as `SAVE "x" LINE 10`. After `LOAD`, the program `RUN`s from that line. If you leave it out, it defaults to 10. You can give a name without a line (`file.bas NAME`), and it will still auto-run from line 10.
+- `driver.bas code.asm` is the two-file form used in Chapter 3 step 5. zmakebas writes the BASIC driver, pasmo `--tap` writes the machine code with no loader, and `cat` joins them, driver first, into `driver.tap`. The two halves are kept as `driver-driver.tap` and `code-code.tap` so you can inspect them. You can also add `NAME` and `LINE` after the two files, and they apply to the BASIC driver the same way as above. Then Fuse opens the combined tape. The BASIC program runs, and its `LOAD ""CODE` loads the block that follows it on the tape.
+- `nofuse` (or `-n`) can be added anywhere on the line to build the tape without opening Fuse. It works with every form above.
+
+Files that come out, always next to the source:
+
+- For a `.asm` or `.bas` file on its own: `file.tap`.
+- For a driver plus code: `driver.tap` (the combined tape, next to the `.bas` file), plus `driver-driver.tap` and `code-code.tap`.
 
 The tape is written next to the source file.
 
-Fuse 1.6.0 treats a `.tap` on the command line the same way as File, Open. Auto-load is on by default, so the emulator's "phantom typist" types `LOAD ""` (or `LOAD "" CODE` if the first block is a CODE file) and the program starts. The script does not pass a custom ROM, because Fuse will not auto-load when one is set. It also passes `--machine 48`, so you get a 48K Spectrum even if Fuse last ran as a 128K.
+Fuse 1.6.0 treats a `.tap` on the command line the same way as File, Open. Auto-load is on by default, so the emulator's "phantom typist" types `LOAD ""` (or `LOAD "" CODE` if the first block is a CODE file) and the program starts. The script does not pass a custom ROM, because Fuse will not auto-load when one is set. It also passes `--machine 48`, so you get a 48K Spectrum even if Fuse last ran as a 128K. It launches Fuse at three times normal size, with `--graphics-filter 3x`. That filter is listed in the official 1.6.0 manual ("Triple size (3x): Scale the displayed screen up to triple size. Available only with the GTK, Win32, Xlib and SDL user interfaces"). The SDL build used here resizes the window to match the filter.
 
-If Fuse cannot open an audio device (for example on a headless machine), set `FUSE_FLAGS=--no-sound`.
+If Fuse cannot open an audio device (for example on a headless machine), set `FUSE_FLAGS=--no-sound`. Extra options in `FUSE_FLAGS` are passed through after the size setting, so they still work.
 
 Examples:
 

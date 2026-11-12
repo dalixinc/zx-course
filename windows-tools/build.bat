@@ -266,9 +266,13 @@ if not exist "%TAP%" (
 
 REM FUSE_FLAGS is optional extra arguments, for example
 REM set FUSE_FLAGS=--no-sound  on a machine with no audio device.
+REM --graphics-filter 4x is four times normal size. Fuse 1.6.0's
+REM official manual (fuse/fuse.html) lists Quadruple size (4x) for
+REM the Win32 UI. FUSE_FLAGS is passed after it, so extra options
+REM still work.
 echo Starting Fuse:
-echo   "%FUSE%" --machine 48 --auto-load %FUSE_FLAGS% "%TAP%"
-start "" "%FUSE%" --machine 48 --auto-load %FUSE_FLAGS% "%TAP%"
+echo   "%FUSE%" --machine 48 --auto-load --graphics-filter 4x %FUSE_FLAGS% "%TAP%"
+start "" "%FUSE%" --machine 48 --auto-load --graphics-filter 4x %FUSE_FLAGS% "%TAP%"
 exit /b 0
 
 REM ------------------------------------------------------------
@@ -278,19 +282,30 @@ echo.
 echo Usage:
 echo   windows-tools\build.bat file.asm
 echo       Assemble with pasmo --tapbas to file.tap, then open it in Fuse.
+echo       The tape has a short BASIC loader around the code.
 echo.
 echo   windows-tools\build.bat file.bas [NAME] [LINE]
 echo       Convert with zmakebas to file.tap, then open it in Fuse.
-echo       NAME is the name shown on the tape (default: the file's name,
-echo       cut to 10 characters). LINE is the auto-start line (default: 10).
+echo       NAME is the program name stored on the tape, which LOAD shows
+echo       as "Program: NAME". It can be at most 10 characters. If you
+echo       leave it out, it defaults to the file's name, also cut to 10
+echo       characters.
+echo       LINE is the auto-run line, the same idea as SAVE "x" LINE 10.
+echo       After LOAD, the program RUNs from that line. Default: 10.
 echo.
 echo   windows-tools\build.bat driver.bas code.asm [NAME] [LINE]
 echo       Build a BASIC driver with zmakebas, assemble the code with
 echo       pasmo --tap (code only, no loader), and join them with
-echo       copy /b into driver.tap (driver first, then code). Then open
-echo       that in Fuse. NAME and LINE apply to the BASIC driver, as above.
+echo       copy /b into driver.tap (driver first, then code). The two
+echo       halves are kept as driver-driver.tap and code-code.tap.
+echo       Then open the combined tape in Fuse. NAME and LINE apply to
+echo       the BASIC driver, as above.
 echo.
 echo   Add -n or nofuse anywhere on the line to build without opening Fuse.
+echo.
+echo The tape is written next to the source file. Fuse is started at
+echo four times normal size (--graphics-filter 4x). Set FUSE_FLAGS for
+echo extra Fuse options, for example FUSE_FLAGS=--no-sound.
 echo.
 echo Run this from the course folder, or from anywhere. The tools are
 echo found next to this script, in windows-tools.

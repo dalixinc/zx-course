@@ -26,19 +26,30 @@ Build a ZX Spectrum tape and optionally open it in Fuse.
 Usage:
   tools/build.sh file.asm
       Assemble with pasmo --tapbas to file.tap, then open it in Fuse.
+      The tape has a short BASIC loader around the code.
 
   tools/build.sh file.bas [NAME] [LINE]
       Convert with zmakebas to file.tap, then open it in Fuse.
-      NAME is the name shown on the tape (default: the file's name,
-      cut to 10 characters). LINE is the auto-start line (default: 10).
+      NAME is the program name stored on the tape, which LOAD shows
+      as "Program: NAME". It can be at most 10 characters. If you
+      leave it out, it defaults to the file's name, also cut to 10
+      characters.
+      LINE is the auto-run line, the same idea as SAVE "x" LINE 10.
+      After LOAD, the program RUNs from that line. Default: 10.
 
   tools/build.sh driver.bas code.asm [NAME] [LINE]
       Build a BASIC driver with zmakebas, assemble the code with
       pasmo --tap (code only, no loader), and join them with cat
-      into driver.tap (driver first, then code). Then open that
-      in Fuse. NAME and LINE apply to the BASIC driver, as above.
+      into driver.tap (driver first, then code). The two halves
+      are kept as driver-driver.tap and code-code.tap. Then open
+      the combined tape in Fuse. NAME and LINE apply to the BASIC
+      driver, as above.
 
   Add -n or nofuse anywhere on the line to build without opening Fuse.
+
+The tape is written next to the source file. Fuse is started at
+three times normal size (--graphics-filter 3x). Set FUSE_FLAGS for
+extra Fuse options, for example FUSE_FLAGS=--no-sound.
 
 pasmo, zmakebas and fuse are found on PATH. If one is missing, the
 script names the apt package that provides it.
@@ -176,13 +187,17 @@ start_fuse() {
   echo "Starting Fuse:"
   # FUSE_FLAGS is optional extra arguments, for example
   # FUSE_FLAGS=--no-sound on a machine with no audio device.
-  echo "  $FUSE_CMD --machine 48 --auto-load ${FUSE_FLAGS:-} \"$TAP\""
+  # --graphics-filter 3x is three times normal size. Fuse 1.6.0
+  # lists Triple size (3x) for the GTK, Win32, Xlib and SDL UIs.
+  # The SDL build resizes the window to match. FUSE_FLAGS is
+  # passed after it, so extra options still work.
+  echo "  $FUSE_CMD --machine 48 --auto-load --graphics-filter 3x ${FUSE_FLAGS:-} \"$TAP\""
   # Start in the background so the prompt comes back, as
   # windows-tools/build.bat does with "start". Redirect
   # Fuse's input and output so this script can exit even
   # if it is run from another script that captures output.
   # shellcheck disable=SC2086
-  "$FUSE_CMD" --machine 48 --auto-load ${FUSE_FLAGS:-} "$TAP" </dev/null >/dev/null 2>&1 &
+  "$FUSE_CMD" --machine 48 --auto-load --graphics-filter 3x ${FUSE_FLAGS:-} "$TAP" </dev/null >/dev/null 2>&1 &
   FUSE_PID=$!
   disown "$FUSE_PID" 2>/dev/null || true
   echo "Fuse started (pid $FUSE_PID)."
