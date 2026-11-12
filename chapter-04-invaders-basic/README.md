@@ -3,6 +3,7 @@
 A Space Invaders-style game in pure Sinclair BASIC, built in steps and tested in a 48K emulator at each step. The programs live in this folder. Start at step 1 and go on only when that step has been tried. The shape of the chapter, the UDGs, and the decisions already made are in [PLAN.md](PLAN.md).
 
 1. [The player's base](step1-base.md) — `step1-base.bas` / `step1-base.tap`
+2. [One shot](step2-shot.md) — `step2-shot.bas` / `step2-shot.tap`
 
 Chapter 5 rebuilds the same game in machine code, in the same order, so the two versions can be compared for speed and for how the programs are written.
 
