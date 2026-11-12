@@ -71,15 +71,15 @@ The plan is in [chapter-04-invaders-basic/PLAN.md](chapter-04-invaders-basic/PLA
 The game is built in these steps, each one tested before the next:
 
 1. The player's base, as a UDG, moving left and right with O and P.
-2. One shot at a time, fired with a key (Space or M, still to be decided).
-3. A still block of invaders as UDGs, drawn from `DATA` into an array.
-4. Marching the block sideways, and stepping down at the edges.
+2. One shot at a time, fired with Space.
+3. A still block of four rows of eight invaders (32) as UDGs, drawn from `DATA` into an array.
+4. Marching the block sideways, and stepping down at the edges, with the invaders animated in two frames.
 5. Shot-versus-invader hits. The living/dead array is the source of truth; `ATTR` and `SCREEN$` are discussed and set aside.
 6. Invaders' bombs.
-7. Shields, if we include them.
-8. Score, lives, waves, game over and `BEEP`, and a two-frame animation for the invaders if it is cheap.
+7. Four shields that erode as they are hit.
+8. Score, lives, waves, game over and `BEEP`.
 
-Movement is by whole character cells. Sound is `BEEP`. The lesson format is the same as Chapter 2, including a `REM` line for every variable. The open questions (the fire key, shields, animation, and how many invaders) are at the end of the plan.
+Movement is by whole character cells. Sound is `BEEP`. The lesson format is the same as Chapter 2, including a `REM` line for every variable. Dalix's answers are in the plan: Space to fire, shields in, two-frame animation, and four rows of eight invaders.
 
 ---
 
@@ -92,7 +92,7 @@ Questions that still need a decision before that chapter is written, carried for
 1. How much BASIC stays around the machine-code games: just the loader and menu, or the score and the screens between games too? The game loop itself has to be machine code.
 2. Movement by whole character cells, as in Chapter 4, or a pixel at a time sideways? Pixels are smoother and lead into Chapter 6, but they are more work.
 3. Where the code lives. 50000 after `CLEAR 49999` leaves about 15K, which should be plenty; the start can move lower if the game grows, as decision 5 in the [Chapter 3 plan](chapter-03-machine-code/PLAN.md) allows.
-4. Whether a Kempston joystick should work as well as the keys (Fuse can emulate one). Chapter 4 already uses O and P and a fire key.
+4. Whether a Kempston joystick should work as well as the keys (Fuse can emulate one). Chapter 4 already uses O and P, and Space to fire.
 5. Sound. Chapter 4 uses `BEEP`, which stops everything while it plays. Short clicks written straight to the speaker port are the usual answer in a machine-code game, and would be new.
 
 ---

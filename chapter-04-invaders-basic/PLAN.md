@@ -15,7 +15,7 @@ Chapter 5 will start with a shorter warm-up: the Chapter 2 bat-and-ball game tra
 
 ## The shape of the chapter
 
-Eight steps, each one a small, tested, playable program, in the Chapter 2 rhythm. The player appears first, then a shot, then a still block of invaders, then the block marches, then shots hit, then the invaders fire back, then shields if we include them, then the scoring, lives, waves and sound that make it a game. Two-frame animation of the invaders, if it is cheap enough, belongs in that last step, once the formation is already being redrawn.
+Eight steps, each one a small, tested, playable program, in the Chapter 2 rhythm. The player appears first, then a shot, then a still block of invaders, then the block marches, then shots hit, then the invaders fire back, then shields, then the scoring, lives, waves and sound that make it a game. The block is four rows of eight invaders (32), and they are animated with two frames, flipping each time the block steps. The fire key is Space.
 
 Movement is by whole character cells, with UDGs. Sound is `BEEP`. The lesson format is the same as Chapter 2, including a `REM` line for every variable.
 
@@ -33,22 +33,22 @@ Each step below gives the goal, the new keywords, a note on the program, and the
 ### Step 2 — One shot
 
 - **Goal.** Fire one bullet up the screen from the base, with the fire key, only one bullet at a time. If a shot is already in flight, a further press does nothing until it has gone off the top (or, in later steps, hit something).
-- **New keywords.** A second moving object, with its own row and column, and a flag (or a sentinel row) for "no bullet in flight". The fire key itself is still to be decided (Space or M; see the open questions).
+- **New keywords.** A second moving object, with its own row and column, and a flag (or a sentinel row) for "no bullet in flight". The fire key is Space. `INKEY$` returns `" "` (a single space) while Space is held, so the test is `K$=" "`. Because `INKEY$` reads only one key at a time, holding O or P and pressing Space together will usually give `""`: the player has to let go of a direction key to fire. That limit is worth showing honestly, and Chapter 5 fixes it by reading the keyboard ports with `IN`, which can see several keys at once.
 - **Program.** `step2-shot`. The bullet can be a slim UDG or a simple character such as `'`. Each pass of the loop moves the base if a key is held, and moves the bullet up one row if it is live. The bullet should travel faster than the player feels they move, so it may step more than once per loop, or the base may only be allowed to step every other pass.
 - **What machine code will fix.** In BASIC the bullet's speed is still whatever time is left in the loop. Once the invaders are in, both the base and the bullet will hitch. Machine code can update the bullet every frame without slowing the player, and could allow more than one shot at a time.
 
 ### Step 3 — A block of invaders
 
 - **Goal.** A still block of invaders, drawn as UDGs from `DATA`, sitting above the player. The player can still move and fire. Shots will pass through the block until step 5.
-- **New keywords.** `DIM` for a two-dimensional array that records which invaders are alive; more than one UDG (`USR "a"`, `USR "b"`, `USR "c"` and so on) for the base and for one, two or three invader types; `FOR` / `NEXT` to draw the block from the array and the `DATA`.
-- **Program.** `step3-block`. The block has a top-left column and row, a width and a height. Each cell of the array is set alive and printed at `base column + column index`, `base row + row index`. Different rows may use different invader UDGs. The number of invaders is an open question; a starting suggestion is three rows of six (18), which is small enough for BASIC to redraw without a long stall, with a "Try this" to grow it.
+- **New keywords.** `DIM` for a two-dimensional array that records which invaders are alive, and a string array (`DIM A$(4,17)`) holding each row ready to print; more than one UDG (`USR "a"`, `USR "b"`, `USR "c"` and so on) for the base and for one, two or three invader types; `FOR` / `NEXT` to draw the block from the array and the `DATA`.
+- **Program.** `step3-block`. The block has a top-left column and row, a width and a height. Each cell of the array is set alive and printed at `base column + column index`, `base row + row index`. The block is four rows of eight invaders (32), held in `DIM V(4,8)`. There are three invader types, as in the arcade game: the top row is one type, the middle two rows a second, and the bottom row a third. Each invader takes two columns, the invader and a gap, so a row is 15 columns wide, and a blank row separates the rows, so the block is 7 rows deep. That leaves 17 columns of room to march across a 32-column screen. Each row is also kept as a string (see the speed section), so the block can be printed with four `PRINT AT`s rather than 32. Only the first frame of each type is shown in this step. A "Try this" can shrink the block to three rows of six (18) for a quicker loop.
 - **What machine code will fix.** Printing a whole block with `PRINT AT` is already a hitch, and it will get worse as the block grows. Machine code can draw the same UDGs, or later pixel sprites, in a fraction of a frame.
 
 ### Step 4 — Marching the block
 
-- **Goal.** The block marches sideways, and when any still-living invader would pass the left or right edge, the block steps down one row and reverses. If the block reaches the player's row, the game can end or simply stop, with a proper "game over" coming in step 8.
+- **Goal.** The block marches sideways, and when any still-living invader would pass the left or right edge, the block steps down one row and reverses. Each step also flips the invaders between their two frames, so they walk as they march. If the block reaches the player's row, the game can end or simply stop, with a proper "game over" coming in step 8.
 - **New keywords.** A direction variable for the block; edge tests against the leftmost and rightmost *living* invaders, not just the original rectangle, so a thin remnant can travel farther towards the side; a march timer, so the block does not try to move on every pass of the loop.
-- **Program.** `step4-march`. The player and the shot stay responsive while the block steps every N passes. As invaders later die, N can shrink, which is the classic speeding up of a thinning wave. How the block is redrawn is in the speed section below: prefer moving by rubbing out the trailing edge and drawing the leading one while the block is still solid, and fall back to a careful reprint once there are gaps.
+- **Program.** `step4-march`. The player and the shot stay responsive while the block steps every N passes. As invaders later die, N can shrink, which is the classic speeding up of a thinning wave. How the block is redrawn is in the speed section below: the block is reprinted a row at a time from the row strings, with a space at each end of the string so the trailing column is rubbed out as the leading one is drawn. There are two strings per row, one for each animation frame, so flipping the frame costs nothing extra: the loop prints the other string.
 - **What machine code will fix.** In BASIC the march will be uneven, and a full reprint will make the player and the bullet stutter. Machine code can move the whole formation on a steady frame beat, and keep the player moving smoothly in between.
 
 ### Step 5 — Shot versus invader
@@ -72,18 +72,18 @@ Each step below gives the goal, the new keywords, a note on the program, and the
 - **Program.** `step6-bombs`. A bomb should start from the lowest living invader in a chosen column, so it does not appear out of a hole. One bomb at a time is enough for this step; more than one can be a "Try this" if the loop can bear it.
 - **What machine code will fix.** BASIC will only manage a few, slow bombs, and they will hitch with the rest of the loop. Machine code can drop more of them, update them every frame, and keep the player's motion independent.
 
-### Step 7 — Shields (if we include them)
+### Step 7 — Shields
 
-- **Goal.** If Dalix wants them, three or four shields sit between the player and the invaders, and are eaten away by bullets and bombs (and later, by invaders that march down onto them).
+- **Goal.** Four shields sit between the player and the invaders, and are eaten away by bullets and bombs (and later, by invaders that march down onto them).
 - **New keywords.** Block graphics or a small set of shield UDGs that can be replaced by a more damaged shape; the same array-or-character idea as the wall of bricks in Chapter 2, but with a few damage states rather than a single "on or off".
-- **Program.** `step7-shields`. This step is optional. If the answer is no, the chapter goes straight from bombs to the end-of-game step, and the later numbering can skip this one. If yes, the shields should be cheap to test, so a hit looks up a small shield map rather than scanning the screen.
+- **Program.** `step7-shields`. Each shield is three cells wide and two high: a top-left corner, a full block and a top-right corner on the top row, and a full block, an arch and a full block underneath. A hit swaps the cell for a damaged shape, then a badly damaged one, then a space. The shields should be cheap to test, so a hit looks up a small shield map (`DIM S(2,12)` for the 12 columns of four three-cell shields, holding each cell's damage level) rather than scanning the screen.
 - **What machine code will fix.** In BASIC a shield can only erode by the character cell, or by a handful of pre-drawn damage frames. Machine code can nibble a shield a byte or a pixel at a time, which looks much closer to the arcade game.
 
-### Step 8 — Score, lives, waves, sound, and animation if it is cheap
+### Step 8 — Score, lives, waves and sound
 
-- **Goal.** Turn the program into a finished game: a score, a life count, a game-over screen, a new wave when the block is cleared (starting lower, or marching faster), and `BEEP` for a shot, a hit, a bomb, a lost life, and a short tune at the end, in the same spirit as Chapter 2. If a two-frame animation for the invaders is cheap, it goes in here as well: two UDGs per invader type, flipped each time the block steps.
-- **New keywords.** `GO SUB` / `RETURN` for a status line, as in Chapter 2; `BEEP`; `RUN` to start a new game from scratch. Animation, if included, is only a second set of `DATA` bytes and a frame flag already being redrawn with the march.
-- **Program.** `step8-game`. `BEEP` blocks the whole game while it plays, so the in-game notes stay very short, as they did in Chapter 2, and the longer tune waits until play has already stopped. Animation is cheap only if the step is already reprinting invaders as they march; if the step is still trying to move the block by edges alone, animation would force a reprint, and should be dropped.
+- **Goal.** Turn the program into a finished game: a score, a life count, a game-over screen, a new wave when the block is cleared (starting lower, or marching faster), and `BEEP` for a shot, a hit, a bomb, a lost life, and a short tune at the end, in the same spirit as Chapter 2. The two-frame animation is already in from step 4.
+- **New keywords.** `GO SUB` / `RETURN` for a status line, as in Chapter 2; `BEEP`; `RUN` to start a new game from scratch.
+- **Program.** `step8-game`. `BEEP` blocks the whole game while it plays, so the in-game notes stay very short, as they did in Chapter 2, and the longer tune waits until play has already stopped.
 - **What machine code will fix.** `BEEP` will always freeze the action. Chapter 5 can click the speaker port without stalling the loop. Score and lives updates will also be invisible at machine-code speed, and a new wave can start on the next frame rather than after a visible pause.
 
 ## Keeping BASIC fast enough
@@ -96,13 +96,43 @@ The game will be slow. The job of this section is to stop it being slower than i
 
 **Few variables.** Chapter 3 also showed that each new variable makes a BASIC loop slower, because every lookup searches the variables area. Short names, no temporaries that are only used once if a direct expression will do, and no leftover variables from earlier experiments in the shipped listing.
 
-**Do not redraw what has not moved.** The expensive thing in this game is `PRINT AT`. The base and the bullet are one cell each and can be rubbed out and reprinted as they move, as the ball and bat were in Chapter 2. The block of invaders is the danger. While it is still a solid rectangle, a sideways step can rub out the trailing column and draw the leading one, and the middle can be left alone. Once there are holes, that is no longer enough: a hole has to travel with the block, so the characters in the middle must move too. At that point the honest options are to reprint the living invaders, or to reprint one row at a time.
+**Do not redraw what has not moved.** The expensive thing in this game is `PRINT AT`. The base and the bullet are one cell each and can be rubbed out and reprinted as they move, as the ball and bat were in Chapter 2. The block of invaders is the danger. With 32 invaders, and holes that have to travel with the block, the middle of the block cannot simply be left alone. The answer is to keep each row as a string and print a whole row at once.
 
-**Update only a few invaders per pass, if a full reprint is too heavy.** If reprinting the whole block in one go makes the player stutter, the loop can move or redraw a few invaders at a time and finish the block over several passes. The formation will ripple rather than step as a unit, but the base and the bullet stay steerable. This is a fallback to try in testing, not a requirement of the first draft of step 4.
+**Print a row as one string, not 32 cells.** Each row of the block is a 17-character string: a space, then eight pairs of an invader and a gap. The leading and trailing spaces rub out the column the row has just left, whichever way it is moving. When an invader dies, its character in the string becomes a space, so the hole travels with the block for free, and the array `V(4,8)` stays the record of who is alive. There are two strings per row, one per animation frame, and both are updated on a kill. A quick test in Fuse, with the same 4 rows of 8 UDGs, measured the two ways of drawing the block:
+
+| Drawing the block of 32 | Frames per redraw | Seconds |
+|---|---:|---:|
+| Four `PRINT AT`s, one string per row | 5 | 0.10 |
+| 32 `PRINT AT`s, one per living invader, from the array | 36.5 | 0.73 |
+
+So a whole-block step with strings costs about a tenth of a second, which the player will feel as a short hitch, but not a stall. Printing invader by invader would freeze the base for three-quarters of a second on every march step, which is not playable. The array-and-cells form stays in the lesson as the obvious first idea, with these numbers, and then the strings replace it.
+
+**Update one row per pass, if a whole-block step is too heavy.** If a tenth of a second still makes the player stutter, the loop can print one row of the block per pass and finish the step over four passes. The formation will ripple from the bottom row up rather than step as a unit, which is in fact what the arcade game does, and the base and the bullet stay steerable. This is a fallback to try in testing, not a requirement of the first draft of step 4.
 
 **March on a timer, not on every pass.** The player should be read every time round the loop. The block should step only every N passes, and bombs less often than the player's bullet. N can fall as the wave thins, or on later waves.
 
 **Time it.** As in Chapters 2 and 3, `FRAMES` is the stopwatch. Each step should record how long a pass of the loop takes, or how many frames a march step costs, so the Chapter 5 rewrite has numbers to beat, not just a feeling that BASIC was slow.
+
+## The UDGs
+
+The 48K Spectrum has 21 UDGs, A to U (`CHR$ 144` to `CHR$ 164`). The game needs 16, so there are five to spare. The letters are fixed here so that each step adds its own without renumbering the earlier ones.
+
+| UDG | Code | Used for | First used |
+|---|---:|---|---|
+| A | 144 | the player's base | step 1 |
+| B | 145 | the player's shot | step 2 |
+| C | 146 | an invader's bomb | step 6 |
+| D, E | 147, 148 | top-row invader, frames 1 and 2 | step 3 (frame 2 in step 4) |
+| F, G | 149, 150 | middle-rows invader, frames 1 and 2 | step 3 (frame 2 in step 4) |
+| H, I | 151, 152 | bottom-row invader, frames 1 and 2 | step 3 (frame 2 in step 4) |
+| J | 153 | shield, full block | step 7 |
+| K, L | 154, 155 | shield, top-left and top-right corners | step 7 |
+| M | 156 | shield, the arch under the middle | step 7 |
+| N, O | 157, 158 | shield, damaged and badly damaged | step 7 |
+| P | 159 | an invader exploding | step 5 |
+| Q to U | 160 to 164 | spare | |
+
+The spares leave room for a "Try this" with a fourth invader type (one per row, two more UDGs), a two-frame bomb that wiggles as it falls, or a flying saucer. The count stays inside 19 as well, which matters only on a 128K machine in 128 BASIC, where T and U become the keywords `SPECTRUM` and `PLAY`. The course runs in 48K mode, where all 21 are there.
 
 ## What this chapter will not do yet
 
@@ -112,16 +142,15 @@ No machine code, no `HALT`, no pixel movement, no speaker-port clicks, and no jo
 
 1. Chapter 4 is Invaders in pure BASIC, built step by step like Chapter 2. Chapter 5 starts with bat and ball in machine code as a warm-up, then translates this Invaders game into machine code. Chapter 6 is the parameter-driven sprite engine, previously planned as Chapter 5.
 2. Movement is by whole character cells, with UDGs.
-3. The keys are O and P for left and right, as in Chapter 2, plus a fire key.
+3. The keys are O and P for left and right, as in Chapter 2, and Space to fire.
 4. Sound is `BEEP`, as in Chapter 2, kept short while the game is running.
 5. The lesson format is the same as Chapter 2, including a `REM` line for every variable. Those `REM` lines go at the end of the program, for the speed reasons above.
 6. Hit detection uses a living/dead array and arithmetic from the bullet's position, not `ATTR` or `SCREEN$`.
 
+7. Shields are in: step 7 stays, with four shields that erode in stages.
+8. The invaders are animated with two frames per type, flipped each time the block steps, from step 4 on.
+9. The block is four rows of eight invaders (32), with three types: one for the top row, one for the middle two, and one for the bottom row.
+
 ## Open questions for Dalix
 
-Only four, and they can be answered as the early steps are tested; steps 1 to 3 do not depend on all of them.
-
-1. **The fire key.** Space or M? Space is the obvious arcade key. M sits under the right hand, next to P.
-2. **Shields.** Should step 7 be in the chapter, with three or four eroding bases between the player and the invaders, or should we go straight from bombs to score, lives and waves?
-3. **Two-frame animation.** If reprinting the invaders as they march is already planned, should each type flip between two UDGs on each step, or stay on one frame?
-4. **How many invaders.** Three rows of six (18) is the suggested start: three types, one per row, small enough to redraw in BASIC. Four rows of eight (32) is closer to the arcade game and may already be a struggle. Five rows of eleven (55) is almost certainly too many for a BASIC loop we still want to be steerable. A "Try this" can grow the block once the small one works.
+None at the moment. Dalix answered the four that were here (the fire key, shields, animation, and how many invaders), and the answers are the decisions above.
