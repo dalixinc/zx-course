@@ -9,10 +9,10 @@ The memory map first, then screen fills in BASIC, then the same fills in Z80 mac
 5. [pasmo, and the Z80 basics](step5-pasmo-and-z80.md) — `step5-routines.asm` / `step5-routines.tap`, `step5-examples.asm` + `step5-examples.bas` / `step5-examples.tap`
 6. [The system variables, from machine code](step6-sysvars.md) (twin of step 1) — `step6-sysvars.asm` / `step6-sysvars.tap`, the BASIC twin `step6-basic.bas` / `step6-basic.tap`, `step6-examples.asm` + `step6-examples.bas` / `step6-examples.tap`
 7. [The attribute fill in machine code, timed](step7-attrfill.md) (twin of step 2) — `step7-attrfill.asm` + `step7-attrfill.bas` / `step7-attrfill.tap` (the code alone: `step7-attrcode.tap`); `step7-contention.py`, an optional T-state count with contended memory
+8. [The bitmap fill in machine code, timed](step8-bitmap.md) (twin of step 2), with the "For info" aside on why the screen is in thirds — `step8-bitmap.asm` + `step8-bitmap.bas` / `step8-bitmap.tap` (the code alone: `step8-bitcode.tap`), `step8-examples.bas` / `step8-examples.tap` (the aside's worked examples, with the same code); `step8-contention.py`, an optional T-state count with contended memory
 
 From step 6 on, each machine-code step is the twin of a BASIC step, in the same order, so the two can be compared for speed and for how the program is put together. The rest will be added here as they are written and checked:
 
-8. The bitmap fill in machine code, timed, with the screen-address aside (twin of step 2)
 9. The interactive fill, now fast (twin of step 3)
 
 The details are in [PLAN.md](PLAN.md).
