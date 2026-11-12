@@ -7,7 +7,7 @@ The original course outline split the next work into two parts:
 - **Part 3** — screen fills with `POKE` in BASIC, then an interactive fill in which the user picks an attribute and a bit pattern.
 - **Part 4** — the same fills rewritten in Z80 machine code, so the speed jump is measured, not just claimed.
 
-Those two parts are now one chapter. Chapter 3 starts with the memory map and the system variables, then `PEEK` / `POKE` fills in BASIC as the bridge from Chapters 1 and 2, then the same fills in Z80, with a timing comparison against numbers we already have. The Space Invaders-style game is Chapter 4, and the sprite engine is Chapter 5.
+Those two parts are now one chapter. Chapter 3 starts with the memory map and the system variables, then `PEEK` / `POKE` fills in BASIC as the bridge from Chapters 1 and 2, then the same fills in Z80, with a timing comparison against numbers we already have. The Space Invaders-style game in BASIC is Chapter 4. Chapter 5 translates bat and ball, then Invaders, into machine code. The sprite engine is Chapter 6.
 
 ## What this chapter is for
 
@@ -156,14 +156,14 @@ The aside as it was planned is now in the lesson, `step8-bitmap.md`, section "Fo
 
 ## What this chapter will not do yet
 
-Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belong in the following chapter (Chapter 4). This chapter stops when we can place code safely, call it from BASIC, fill the screen quickly, and have measured the difference.
+An Invaders-style game in BASIC belongs in Chapter 4. A game loop with `HALT`, and the same games in machine code, belong in Chapter 5. Pixel-accurate sprites belong in Chapter 6. This chapter stops when we can place code safely, call it from BASIC, fill the screen quickly, and have measured the difference.
 
 ## Decisions
 
-1. Original Parts 3 and 4 are folded into Chapter 3. The Invaders-style game is Chapter 4, and the sprite engine is Chapter 5.
+1. Original Parts 3 and 4 are folded into Chapter 3. Invaders in BASIC is Chapter 4, the same games in machine code are Chapter 5, and the sprite engine is Chapter 6.
 2. Order: memory map and system variables first, then BASIC fills, then Z80.
 3. There is a slow interactive fill in BASIC (step 3), and a fast one at the end (step 9).
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-Chapter 3 is complete. The open decisions for Chapter 4 are at the end of [summary.md](summary.md).
+Chapter 3 is complete. The Chapter 4 plan is in [chapter-04-invaders-basic/PLAN.md](../chapter-04-invaders-basic/PLAN.md). Decisions for Chapter 4, and the questions carried forward to Chapter 5, are at the end of [summary.md](summary.md).

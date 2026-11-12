@@ -69,19 +69,35 @@ A few more measurements from the lessons explain the table:
 
 ## What machine code still has not done
 
-The chapter filled the screen with one byte. It has not yet drawn anything at a chosen place, moved anything, read the keyboard from machine code, or run a loop in time with the picture. The fills are also called from BASIC, and the step 4 figures showed that once the code is fast, the call from BASIC is the slow part: about half a frame each time. A game loop has to stay in machine code.
+The chapter filled the screen with one byte. It has not yet drawn anything at a chosen place, moved anything, read the keyboard from machine code, or run a loop in time with the picture. The fills are also called from BASIC, and the step 4 figures showed that once the code is fast, the call from BASIC is the slow part: about half a frame each time. A game loop has to stay in machine code. Chapter 4 stays in BASIC, so those jobs wait until Chapter 5.
 
 ## What comes next
 
-Chapter 4 is a simple Space Invaders-style game, written in machine code, with character cells or simple block graphics rather than smooth sprites. The [course outline](../OUTLINE.md) lists its steps: a game loop synced to the frame with `HALT`, reading the keyboard, the player and bullets, a row of invaders and their shots, then collisions, score, lives and game over. It will reuse what this chapter built: `CLEAR 49999` and code at 50000, parameter bytes, `HALT` to wait for a frame, `nxtdn` and the screen-address arithmetic from step 8, and `FRAMES` to measure what we build. Chapter 5 is the sprite engine.
+Chapter 4 is a Space Invaders-style game in pure BASIC, built in the same small-step way as Chapter 2. It will be slow, and that is the point: learners see how the game is written, then Chapter 5 translates it into machine code. The plan is in [chapter-04-invaders-basic/PLAN.md](../chapter-04-invaders-basic/PLAN.md).
 
-## Open decisions for Chapter 4
+Chapter 5 starts with a warm-up, the Chapter 2 bat-and-ball game in machine code, which is the first real-time loop of the course (`HALT`, reading the keyboard, moving things, collisions). Then it rebuilds the Invaders game in machine code, in the same order as Chapter 4, so the two can be compared for speed and for how the programs are written. That chapter will reuse what this one built: `CLEAR 49999` and code at 50000, parameter bytes, `HALT` to wait for a frame, `nxtdn` and the screen-address arithmetic from step 8, and `FRAMES` to measure what we build.
 
-These are for Dalix to decide before Chapter 4 starts:
+Chapter 6 is the parameter-driven sprite engine, previously planned as Chapter 5.
+
+Several of the questions this wrap-up first asked about Chapter 4 now have answers. The ones that still apply have been moved to Chapter 5.
+
+## Decisions for Chapter 4
+
+1. **How much BASIC stays.** Chapter 4 is BASIC throughout. The game loop in machine code belongs in Chapter 5.
+2. **Movement.** Chapter 4 moves by whole character cells, with UDGs. Whether the machine-code version should move a pixel at a time is a question for Chapter 5.
+3. **The keys.** O and P for left and right, as in Chapter 2, plus a fire key. Which fire key, and whether a Kempston joystick should be added later, are still open (the fire key in the Chapter 4 plan; the joystick under Chapter 5).
+4. **Sound.** Chapter 4 uses `BEEP`, as Chapter 2 did. Short clicks on the speaker port are a question for Chapter 5.
+
+## Open decisions for Chapter 5
+
+These are for Dalix to decide before the machine-code games are written:
 
 1. **How much BASIC stays.** A BASIC loader and menu around an all-machine-code game, or BASIC kept for the score and the screens between games, as step 9 kept it for the questions? The game loop itself has to be machine code.
-2. **Movement by cells or by pixels.** The outline says character cells or simple blocks are enough. Moving the player and the invaders a whole cell (8 pixels) at a time is simplest. Moving them a pixel at a time sideways is smoother, and leads into Chapter 5's pre-shifted sprites, but it is more work.
+2. **Movement by cells or by pixels.** Moving the player and the invaders a whole cell at a time, as Chapter 4 does, is the closest translation. Moving them a pixel at a time sideways is smoother, and leads into Chapter 6's pre-shifted sprites, but it is more work.
 3. **Where the code goes.** 50000 after `CLEAR 49999` leaves about 15K, from 50000 up to the UDGs at 65368. That should be plenty, but if the game, its graphics and a row table grow, we could move the start lower, as decision 5 in the [plan](PLAN.md) allows.
-4. **The keys.** For example O and P for left and right and Space or M to fire, and whether to support a Kempston joystick as well (Fuse can emulate one).
-5. **Sound.** The ROM's `BEEP` stops everything while it plays. Short clicks written straight to the speaker port are the usual answer in a game, and would be new.
-6. **The optional Python scripts.** Steps 7 and 8 each have a short optional script that counts T-states with contended memory. Keep them, or take them out of the course and leave the figures in the lessons.
+4. **A Kempston joystick.** Whether to support one as well as the keys (Fuse can emulate it).
+5. **Sound.** The ROM's `BEEP` stops everything while it plays. Short clicks written straight to the speaker port are the usual answer in a machine-code game, and would be new.
+
+## Still open from Chapter 3
+
+Steps 7 and 8 each have a short optional Python script that counts T-states with contended memory. Keep them, or take them out of the course and leave the figures in the lessons.

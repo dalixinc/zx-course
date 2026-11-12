@@ -1,6 +1,6 @@
 # ZX Spectrum programming course — outline
 
-A hands-on course for getting back into Spectrum thinking: the machine, BASIC, the screen, then machine code, a simple game, and a generic sprite engine.
+A hands-on course for getting back into Spectrum thinking: the machine, BASIC, the screen, machine code, a Space Invaders-style game built first in BASIC and then in machine code, and a generic sprite engine.
 
 Every program is tested in a 48K Spectrum emulator before it is shown. We work in short chunks, one at a time. Notes stay plain and short.
 
@@ -58,28 +58,48 @@ The agreed order is the memory map and system variables first, then BASIC fills 
 
 Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space. The course assembler is pasmo, using `--tapbas` to write a tape with a short BASIC loader.
 
-All nine steps of Chapter 3 are written and tested. The wrap-up, with the BASIC against machine code timings and the open decisions for Chapter 4, is in [chapter-03-machine-code/summary.md](chapter-03-machine-code/summary.md).
+All nine steps of Chapter 3 are written and tested. The wrap-up, with the BASIC against machine code timings, is in [chapter-03-machine-code/summary.md](chapter-03-machine-code/summary.md). Several of the questions that wrap-up asked about Chapter 4 now have answers, and the ones that still apply have been moved to Chapter 5.
 
 ---
 
-## Chapter 4 — A simple Space Invaders-style game
+## Chapter 4 — A Space Invaders-style game in BASIC
 
-A small machine-code game that does not need clever sprites. Character cells or simple block graphics are enough.
+A Space Invaders-style game in pure Sinclair BASIC, built in small, tested, playable steps, in the same rhythm as Chapter 2. It will be slow: that is the point. Learners see how the game is put together, then Chapter 5 rebuilds it in machine code, in the same order, for a like-for-like comparison.
 
-1. A game loop synced to the frame with `HALT`.
-2. Reading the keyboard.
-3. The player and bullets.
-4. A row of invaders (or a few descending aliens) and their shots.
-5. Collisions, score, lives, and game over.
-6. The pieces put together, tested as they go in.
+The plan is in [chapter-04-invaders-basic/PLAN.md](chapter-04-invaders-basic/PLAN.md).
 
-This is the bridge to Chapter 5: once things need to move smoothly over a background, character blocks are no longer enough.
+The game is built in these steps, each one tested before the next:
+
+1. The player's base, as a UDG, moving left and right with O and P.
+2. One shot at a time, fired with a key (Space or M, still to be decided).
+3. A still block of invaders as UDGs, drawn from `DATA` into an array.
+4. Marching the block sideways, and stepping down at the edges.
+5. Shot-versus-invader hits. The living/dead array is the source of truth; `ATTR` and `SCREEN$` are discussed and set aside.
+6. Invaders' bombs.
+7. Shields, if we include them.
+8. Score, lives, waves, game over and `BEEP`, and a two-frame animation for the invaders if it is cheap.
+
+Movement is by whole character cells. Sound is `BEEP`. The lesson format is the same as Chapter 2, including a `REM` line for every variable. The open questions (the fire key, shields, animation, and how many invaders) are at the end of the plan.
 
 ---
 
-## Chapter 5 — A parameter-driven sprite engine
+## Chapter 5 — The same games in machine code
 
-A generic sprite engine that can drive more than one kind of game, rather than a one-off blit for a single size.
+Chapter 5 starts with a warm-up: the Chapter 2 bat-and-ball game translated to machine code. That is the course's first real-time game loop (`HALT`, reading the keyboard, moving things, collisions). Then it rebuilds the Chapter 4 Invaders game in machine code, step by step in the same order, so the two versions can be compared for speed and for how the programs are written.
+
+Questions that still need a decision before that chapter is written, carried forward from the Chapter 3 wrap-up:
+
+1. How much BASIC stays around the machine-code games: just the loader and menu, or the score and the screens between games too? The game loop itself has to be machine code.
+2. Movement by whole character cells, as in Chapter 4, or a pixel at a time sideways? Pixels are smoother and lead into Chapter 6, but they are more work.
+3. Where the code lives. 50000 after `CLEAR 49999` leaves about 15K, which should be plenty; the start can move lower if the game grows, as decision 5 in the [Chapter 3 plan](chapter-03-machine-code/PLAN.md) allows.
+4. Whether a Kempston joystick should work as well as the keys (Fuse can emulate one). Chapter 4 already uses O and P and a fire key.
+5. Sound. Chapter 4 uses `BEEP`, which stops everything while it plays. Short clicks written straight to the speaker port are the usual answer in a machine-code game, and would be new.
+
+---
+
+## Chapter 6 — A parameter-driven sprite engine
+
+A generic sprite engine that can drive more than one kind of game, rather than a one-off blit for a single size. This was previously planned as Chapter 5. It comes after the machine-code games, once character cells are no longer enough and things need to move smoothly over a background.
 
 The engine is parameter-driven. The main parameters are:
 
@@ -93,7 +113,7 @@ Around those:
 2. Masked drawing, and saving/restoring the background (including the order of restore when two sprites overlap).
 3. Wiring size, frames, and scroll steps as parameters, then a short demo with two different sprite sizes running from the same engine.
 
-Existing sprite-engine notes from the trilogy can be used as a reference later. This part still builds the generic engine from the ideas in Chapters 1–4, not by lifting game code.
+Existing sprite-engine notes from the trilogy can be used as a reference later. This part still builds the generic engine from the ideas in Chapters 1–5, not by lifting game code.
 
 ---
 
@@ -101,4 +121,4 @@ Existing sprite-engine notes from the trilogy can be used as a reference later. 
 
 This course ends at the generic sprite engine.
 
-Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the five chapters above.
+Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the six chapters above.

@@ -15,7 +15,7 @@ The memory map first, then screen fills in BASIC, then the same fills in Z80 mac
 
 From step 6 on, each machine-code step is the twin of a BASIC step, in the same order, so the two can be compared for speed and for how the program is put together.
 
-[Chapter 3 wrap-up: what we learned, and BASIC against machine code](summary.md), with the open decisions for Chapter 4.
+[Chapter 3 wrap-up: what we learned, and BASIC against machine code](summary.md), with the decisions for Chapter 4 and the questions carried forward to Chapter 5.
 
 The details are in [PLAN.md](PLAN.md).
 
