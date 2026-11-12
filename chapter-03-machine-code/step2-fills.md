@@ -88,7 +88,7 @@ It prints 18501, the address of the top line of the cell, and draws a solid yell
 
 The attributes are simpler. They are 24 rows of 32 bytes, in order, so the attribute of character row `R`, column `X` is at `22528+32*R+X`. The attribute fill goes from the top down, a row at a time.
 
-In binary, the layout is easier to see. A bitmap address is `010TTLLL RRRCCCCC`: `TT` is the third, `LLL` the pixel line, `RRR` the character row inside the third, and `CCCCC` the column. Counting up through the addresses changes the column fastest, then the row, then the pixel line, then the third. The hardware was designed this way so the ULA could fetch the screen cheaply, and it will matter again when we draw in machine code: moving down one pixel line inside a cell is adding 256, which on the Z80 is just adding 1 to the high byte.
+In binary, the layout is easier to see. A bitmap address is `010TTRRR CCCXXXXX`: `TT` is the third, `RRR` the pixel row inside the character cell, `CCC` the character row inside the third, and `XXXXX` the column. Counting up through the addresses changes the column fastest, then the character row, then the pixel row, then the third. The hardware was designed this way so the ULA could fetch the screen cheaply, and it will matter again when we draw in machine code: moving down one pixel line inside a cell is adding 256, which on the Z80 is just adding 1 to the high byte. Step 8 explains the layout in full, with the same letters.
 
 ## The listing
 
