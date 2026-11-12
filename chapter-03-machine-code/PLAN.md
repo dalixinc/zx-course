@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 3 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. Steps 1 to 4 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -73,7 +73,7 @@ All programs are tested in Fuse before they are shown, as usual.
 
 ## Steps
 
-Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 3 are written; the titles of the others are working titles.
+Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 4 are written; the titles of the others are working titles.
 
 The first draft of this plan had nine steps. The memory map and the system variables turned out to fit in one program, so the first two planned steps became step 1, and everything after moved up by one. The list below is the chapter as it is being written.
 
@@ -98,12 +98,12 @@ The first draft of this plan had nine steps. The memory map and the system varia
 - **Program.** `step3-interactive-fill.bas`. The two fill loops are subroutines on their own, so a later step can swap each one for a `USR` call.
 - **Tested.** Fuse: bad answers to the one-digit check and the pattern check, then a full fill with timings, then a second go with different choices. The fills took 3699 frames (bitmap) and 489 (attributes) on the first go, slower than step 2 because of the longer program and the extra variables.
 
-### Step 4 — The Z80 in small pieces, and a first routine
+### Step 4 — The Z80 in small pieces, and a first routine (written)
 
-- **Goal.** Registers and flags from first principles, then one routine that returns a value to BASIC.
-- **New concepts.** A, F, BC, DE, HL; the flags at a glance (in particular Z and C); `LD`, `RET`. On the Spectrum, `USR address` calls the routine and **the value that comes back to BASIC is the BC register pair**, not A. The brief idea "LD A / RET" therefore needs a last step that puts the result in BC (for example `LD B,0` / `LD C,A`, or simply `LD BC,nn` / `RET`) before `PRINT USR address` will show the number you expect.
-- **Program.** Bytes loaded from `DATA` with `POKE`, starting at 50000, after `CLEAR 49999`. `PRINT USR 50000` should print a known number (for example 42).
-- **How we test.** Fuse: the printed number is 42 (or whatever was loaded). A wrong return register would show some other value and is the thing to watch for. Optionally, open the Fuse debugger on the routine and confirm BC.
+- **Goal.** What the processor does with bytes (fetch, decode, execute, the program counter), a few registers, and the first routines, hand-assembled and called from BASIC.
+- **New concepts.** A, B, C, H, L and the pairs BC and HL; the zero flag (carry and DE are named, for later); decimal and hex, low byte first; `USR address`, which hands back BC, and `RANDOMIZE USR`; the instructions `LD rr,nn`, `LD r,n`, `LD r,r`, `LD (HL),n`, `INC HL`, `DEC BC`, `OR C`, `JR NZ,e` (and how the distance byte is worked out), `OUT (254),A` and `RET`; a checksum of the `DATA`; why a wrong byte can crash the machine.
+- **Program.** `step4-first-routine.bas`: `CLEAR 49999`, then 27 bytes poked from `DATA` into 50000 to 50026 and checked against a sum of 2110. Three routines: `LD BC,42` / `RET` (`PRINT USR 50000` gives 42); a red border that hands back its colour (`USR 50004` gives 2); and an attribute fill with a `DEC BC` / `LD A,B` / `OR C` / `JR NZ` loop, timed as 100 calls minus 100 calls of a lone `RET`.
+- **Tested.** Fuse, 48K, four runs: 42 and 2 printed, border red; 100 fills 96 frames, 100 empty calls 46 (once 47), so one fill is 0.5 frames, about 650 times as fast as step 2's 325. A mistyped byte gave `SUM IS 2109, NOT 2110` and stopped before any code ran. The bytes match pasmo's output for the same source, byte for byte.
 
 ### Step 5 — Calling code: `CLEAR`, `DATA` / `POKE`, then an assembler
 
@@ -114,7 +114,7 @@ The first draft of this plan had nine steps. The memory map and the system varia
 
 ### Step 6 — Fill the attributes with `LDIR`
 
-- **Goal.** The first useful routine: set every attribute byte to a value in A (or a value passed from BASIC), using `LD HL,nn` / `LD DE,nn` / `LD BC,nn` / `LDIR`.
+- **Goal.** A better attribute fill than step 4's loop: set every attribute byte to a value in A (or a value passed from BASIC), using `LD HL,nn` / `LD DE,nn` / `LD BC,nn` / `LDIR`.
 - **New concepts.** `LDIR` as a counted block copy (and why we seed the first byte, then copy 767 times); passing a colour from BASIC in BC (because of `USR`); contended memory, in outline, as the reason a cycle count will not match a wall clock exactly.
 - **Program.** Assembler, `ORG 50000`, called with `RANDOMIZE USR 50000` after a `POKE` or a `USR` argument that holds the attribute. A BASIC typist-friendly `DATA` version can sit beside it for anyone not yet using pasmo.
 - **How we test.** Fuse: the whole 32×24 grid changes colour, including the lower screen unless we choose not to fill the last two rows (a small design choice: 22 lines, or all 24). Time it with `FRAMES` around the `USR` call.
@@ -207,4 +207,4 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 4.
+The next lesson to write is step 5.
