@@ -37,11 +37,25 @@ The bat-and-ball game in Chapter 2 is built in these steps, each one tested befo
 
 The earlier BASIC ideas — `PRINT`, `BORDER`, `INK`, `PAPER`, variables, `IF`, `FOR`, and so on — are taught in the steps as they are needed, rather than as a separate first pass.
 
-The slowness of BASIC animation is useful here: it is why Parts 3 and 4 exist.
+A wrap-up of the BASIC, and the measurements that show why we stop here, is in [chapter-02-bat-and-ball/summary.md](chapter-02-bat-and-ball/summary.md).
 
 ---
 
-## Part 3 — Screen fills with POKE, then an interactive fill
+## Proposed numbering from here (for review)
+
+Dalix has asked for the machine-code work to be Chapter 3. The original outline split what comes next into Part 3 (`POKE` fills in BASIC, then an interactive fill) and Part 4 (the same fills in Z80, to show the speed jump). The proposal is to fold those two parts into one chapter, starting with `PEEK` / `POKE` in BASIC as the bridge, then repeating the fills in machine code. The Invaders-style game and the sprite engine would become Chapters 4 and 5.
+
+- Chapter 1 — The machine (unchanged; was Part 1)
+- Chapter 2 — Bat and ball, and a wrap-up of BASIC (unchanged, plus the summary above)
+- Chapter 3 — From `POKE` to Z80 machine code (proposed fold of Parts 3 and 4). The detailed plan is in [chapter-03-machine-code/PLAN.md](chapter-03-machine-code/PLAN.md).
+- Chapter 4 — A simple Space Invaders-style game (was Part 5)
+- Chapter 5 — A parameter-driven sprite engine (was Part 6)
+
+The original Part 3 to Part 6 headings are kept below until this is agreed.
+
+---
+
+## Part 3 — Screen fills with POKE, then an interactive fill (proposed: fold into Chapter 3)
 
 The aim is to think in Spectrum screens again: bitmap bytes and attribute bytes, not `PRINT` and `PLOT`.
 
@@ -53,7 +67,7 @@ The aim is to think in Spectrum screens again: bitmap bytes and attribute bytes,
 
 ---
 
-## Part 4 — The same fills in machine code
+## Part 4 — The same fills in machine code (proposed: fold into Chapter 3)
 
 Machine code from first principles, using the fills from Part 3 so the speed jump is obvious.
 
@@ -65,7 +79,7 @@ Machine code from first principles, using the fills from Part 3 so the speed jum
 
 ---
 
-## Part 5 — A simple Space Invaders-style game
+## Part 5 — A simple Space Invaders-style game (proposed: Chapter 4)
 
 A small machine-code game that does not need clever sprites. Character cells or simple block graphics are enough.
 
@@ -80,7 +94,7 @@ This is the bridge to Part 6: once things need to move smoothly over a backgroun
 
 ---
 
-## Part 6 — A parameter-driven sprite engine
+## Part 6 — A parameter-driven sprite engine (proposed: Chapter 5)
 
 A generic sprite engine that can drive more than one kind of game, rather than a one-off blit for a single size.
 
@@ -104,4 +118,4 @@ Existing sprite-engine notes from the trilogy can be used as a reference later. 
 
 This course ends at the generic sprite engine.
 
-Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the six parts above.
+Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the chapters above.

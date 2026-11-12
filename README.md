@@ -7,5 +7,7 @@ Every program is tested in the Fuse emulator (48K) before it is committed.
 - [Course outline](OUTLINE.md)
 - [Chapter 1: The machine](chapter-01-the-machine/)
 - [Chapter 2: Bat and ball](chapter-02-bat-and-ball/)
+- [Chapter 2 wrap-up: how far BASIC goes](chapter-02-bat-and-ball/summary.md)
+- [Chapter 3 plan: machine code](chapter-03-machine-code/PLAN.md) (proposed)
 - [Colour reference](colour-reference.md)
 - [Test tools](tools/README.md)
