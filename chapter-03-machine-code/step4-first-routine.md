@@ -36,7 +36,7 @@ A register is a storage place inside the processor itself. The Z80 can work on r
 | B, C | General use. Together, BC is our loop counter, and the number that goes back to BASIC. |
 | H, L | General use. Together, HL holds an address. |
 
-Some registers work in pairs, as one 16-bit register that holds 0 to 65535: **BC** is B and C, and **HL** is H and L. The first letter is the high byte. So when BC holds 768, B holds 3 and C holds 0, because 768 = 3*256 + 0. There is a third pair, **DE**, which we will need in step 6.
+Some registers work in pairs, as one 16-bit register that holds 0 to 65535: **BC** is B and C, and **HL** is H and L. The first letter is the high byte. So when BC holds 768, B holds 3 and C holds 0, because 768 = 3*256 + 0. There is a third pair, **DE**, which we will meet in step 5.
 
 There is one more register, **F**, the *flags*. Its bits are set or cleared by many instructions to record something about the result. This step needs only one of them:
 
@@ -376,9 +376,9 @@ Hand assembly is slow and easy to get wrong. Every instruction has to be looked 
 
 The numbers in `DATA` say nothing about what they do. `33,0,88` means `LD HL,22528` only if you have the table beside you. The comments are in this lesson, not in the program.
 
-The colour, 48, and the border colour, 2, are fixed inside the code. To change them you have to poke a different byte into the right address (50019 for the fill colour, 50005 for the border). Step 6 passes the colour in from BASIC instead.
+The colour, 48, and the border colour, 2, are fixed inside the code. To change them you have to poke a different byte into the right address (50019 for the fill colour, 50005 for the border). Step 7 passes the colour in from BASIC instead.
 
-The fill loop is the slow way to do it in machine code. Six instructions go round 768 times. The Z80 has a single instruction, `LDIR`, that copies a block of memory, and step 6 uses it.
+The fill loop is the slow way to do it in machine code. Six instructions go round 768 times. The Z80 has a single instruction, `LDIR`, that copies a block of memory, and step 7 uses it.
 
 Step 5 introduces pasmo, which takes the assembler source shown above, works out the bytes, the addresses and the jump distances for us, and writes a tape that loads them. It does the same 27 bytes, with the comments kept in the source where they belong.
 

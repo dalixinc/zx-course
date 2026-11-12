@@ -24,6 +24,12 @@ tools/run-tap.sh chapter-01-the-machine/01-fill.bas
 
 Fuse's `--auto-load` does not type `LOAD ""` on this SDL build when started from a script, so the helper sends the keys: Enter (leave the copyright screen), `j` (the `LOAD` keyword), Alt+P twice (Symbol Shift+P, the quotes), and Enter. It then captures one screenshot a second of the Fuse window into `/tmp/zx-course-shots`.
 
+The helper also takes a `.tap` instead of a `.bas`, and loads it as it is. That is how the pasmo tapes from Chapter 3 step 5 on are tested:
+
+```
+tools/run-tap.sh chapter-03-machine-code/step5-routines.tap
+```
+
 Optional environment variables:
 
 - `CAPTURE_SECS` — how long to capture after `LOAD`, in seconds (default 30).
@@ -58,3 +64,12 @@ z80asm -o /tmp/t-z80asm.bin /tmp/t.asm
 ```
 
 Both should write the three bytes `3E FF C9`.
+
+## pasmo tapes
+
+```
+pasmo --tapbas --name routines chapter-03-machine-code/step5-routines.asm chapter-03-machine-code/step5-routines.tap
+pasmo -d --bin chapter-03-machine-code/step5-routines.asm /tmp/r.bin   # -d prints the listing
+```
+
+`--tapbas` writes a BASIC loader (`CLEAR`, `POKE 23610,255`, `LOAD ""CODE`, and `RANDOMIZE USR` to the `end` address) followed by the code. `--tap` writes the code alone; join it after a zmakebas loader with `cat` (on Windows, `copy /b a.tap+b.tap c.tap`).

@@ -3,7 +3,9 @@
 # headless, under Xvfb. Types LOAD "" for you (Return, j, Alt+P, Alt+P, Return).
 #
 # Usage:
-#   tools/run-tap.sh [listing.bas]
+#   tools/run-tap.sh [listing.bas | tape.tap]
+# A .tap is loaded as it is (for example one written by pasmo); a .bas is
+# turned into a .tap with zmakebas first.
 # Default listing: chapter-01-the-machine/01-fill.bas in the course root.
 #
 # Environment:
@@ -39,7 +41,10 @@ if [ -n "${1:-}" ]; then
 else
   SRC="$ROOT/chapter-01-the-machine/01-fill.bas"
 fi
-TAP="${SRC%.bas}.tap"
+case "$SRC" in
+  *.tap) TAP="$SRC"; PREBUILT=1 ;;
+  *)     TAP="${SRC%.bas}.tap"; PREBUILT=0 ;;
+esac
 ROM="${ROM:-/usr/share/spectrum-roms/48.rom}"
 DISPLAY_NUM="${DISPLAY_NUM:-99}"
 SHOT_DIR="${SHOT_DIR:-/tmp/zx-course-shots}"
@@ -51,13 +56,17 @@ KEY_EVERY="${KEY_EVERY:-1}"
 KEY_HOLD="${KEY_HOLD:-}"
 KEY_HOLD_UNTIL="${KEY_HOLD_UNTIL:-}"
 
-command -v zmakebas >/dev/null
+[ "$PREBUILT" -eq 1 ] || command -v zmakebas >/dev/null
 command -v fuse >/dev/null
 command -v xdotool >/dev/null
 command -v scrot >/dev/null
 
-zmakebas -a 10 -n "$TAP_NAME" -o "$TAP" "$SRC"
-echo "Wrote $TAP (name: $TAP_NAME)"
+if [ "$PREBUILT" -eq 0 ]; then
+  zmakebas -a 10 -n "$TAP_NAME" -o "$TAP" "$SRC"
+  echo "Wrote $TAP (name: $TAP_NAME)"
+else
+  echo "Using the tape as it is: $TAP"
+fi
 
 if ! xdpyinfo -display ":$DISPLAY_NUM" >/dev/null 2>&1; then
   Xvfb ":$DISPLAY_NUM" -screen 0 800x600x24 >/tmp/zx-course-xvfb.log 2>&1 &
