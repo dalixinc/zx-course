@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 6 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. Steps 1 to 8 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -73,7 +73,7 @@ All programs are tested in Fuse before they are shown, as usual.
 
 ## Steps
 
-Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 6 are written; the titles of the others are working titles.
+Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 8 are written; the titles of the others are working titles.
 
 The first draft of this plan had nine steps. The memory map and the system variables turned out to fit in one program, so the first two planned steps became step 1, and everything after moved up by one. The list below is the chapter as it is being written.
 
@@ -129,81 +129,21 @@ Steps 4 and 5 are the bridge: step 4 hand-assembles a first routine, and step 5 
 - **Program.** `step6-sysvars.asm` (`--tapbas`): step 1's screen after `CLEAR 49999`, with a table-driven loop for the seven two-byte variables, then `CHARS`, `ATTR P`, `BORDCR`, `FRAMES` and `LAST K`, timed with `FRAMES`, ENTER to return. `step6-basic.bas`: the same screen in BASIC, with step 1's statements, timed the same way. `step6-examples.asm` + `step6-examples.bas`: thirteen small examples, including timings of the two number printers and of CLS.
 - **Tested.** pasmo and z80asm give the same bytes for both source files. Fuse, 48K: `PROG` 23755, `RAMTOP` 49999, `UDG` 65368, `P RAMT` 65535, `CHARS` 15360, `ATTR P` 7, `BORDCR` 7, `LAST K` 99 after `c`, all as in step 1; `VARS` 23826, `E LINE` 23827 (matching BASIC `PEEK`s afterwards), `STKEND` 23832, free 26167. The table took 12 frames in machine code (three runs) and 35 in BASIC: about three times as fast, because CLS (about 3 frames) and the ROM drawing characters take most of the time. 100 numbers: `pnum` 14 frames, PRINT-FP 49. OUT-NUM-1 printed 12345 as `<345` and 49999 as `0`.
 
-### Step 7 — The attribute fill in machine code, timed
+### Step 7 — The attribute fill in machine code, timed (written)
 
-- **Goal.** The twin of step 2's attribute fill. Step 4's loop, then `LDIR`, both timed with the same `FRAMES` method.
-- **New concepts.** `LDIR` as a counted block copy (seed the first byte, then copy 767 times, with HL one behind DE); passing the colour in from BASIC through the inbox byte (or in BC); contended memory, in outline, as the reason a cycle count will not match a wall clock exactly.
-- **Program.** Assembler, `org 50000`, called with `RANDOMIZE USR` after a `POKE` of the colour.
-- **How we test.** Fuse: the whole 32x24 grid changes colour (22 lines or all 24 is a small design choice). Time 100 calls minus 100 empty calls, as in step 4, for the loop and for `LDIR`, and set both beside step 2's 325 frames.
+- **Goal.** The twin of step 2's attribute fill. Step 4's loop, then `LDIR`, both timed with the same `FRAMES` method, and checked against a count of T-states.
+- **New concepts.** Parameter bytes at the start of the code (`colour`, `times`, `where`), poked by BASIC and read with `LD A,(nn)` and `LD HL,(nn)` / `LD DE,(nn)`; `LD (HL),r`; `LDIR` (HL from, DE to, BC count; 21 T-states a byte, 16 for the last; flags; BC = 0 means 65536; interruptible), with `LDI`, `LDD` and `LDDR` named; filling by copying a block onto itself one byte along (HL one behind DE); a repeat count in D, or on the stack with `PUSH AF`; T-states, 3.5 MHz and 69888 T-states a frame; contended memory, in outline, from the Sinclair Wiki's rules. All 24 rows are filled, as in step 2.
+- **Program.** `step7-attrfill.asm` (55 bytes at 50000, loaded with `LOAD ""CODE`; `fill` at 50004, `fldir` at 50029) and the driver `step7-attrfill.bas`: one visible fill of each kind, then 250 of each timed on the screen and 250 of each at 60000, set beside step 2's 325 frames. `step7-contention.py` counts the T-states with the contention delays.
+- **Tested.** pasmo and z80asm give the same 55 bytes. Fuse, 48K, three runs, the same each time: 250 fills on the screen took 112 frames (loop) and 76 (`LDIR`); at 60000, 110 and 60. One fill: 0.448 and 0.304 frames, 725 and 1069 times as fast as step 2. The count without contention says 107.3 and 58.0; with contention, 109.0 and 73.4; Fuse is 2 to 3 frames over each, the BASIC around the call and the interrupt routine. Contention costs the loop 2 frames and `LDIR` 16, so on the screen `LDIR` is only 1.47 times as fast as the loop (1.83 in plain memory). Try-this checks: N=100 gave 45, 31, 45, 24; N=256 with `POKE 50001,0` gave 114, 77, 112, 61; colour 184 flashed; the ROM-to-screen `LDIR` example ran.
 
-### Step 8 — The bitmap fill in machine code, timed
+### Step 8 — The bitmap fill in machine code, timed (written)
 
-- **Goal.** The twin of step 2's bitmap fill. Fill 16384 to 22527 with a pattern byte, and put BASIC and machine-code times for both fills on the same page.
-- **New concepts.** The same `LDIR` idea over 6144 bytes; a fill that walks the screen line by line using the address bits, which is where the aside below comes in.
-- **Program.** A routine with the pattern byte passed from BASIC, and the `FRAMES` stopwatch.
-- **How we test.** Fuse, normal speed, `FRAMES` as in Chapter 2. Report the time and the ratio to step 2's 2468 frames. Do not invent a cycle-count "should be" figure and treat it as a measurement; the Fuse number is the one that goes in the lesson.
+- **Goal.** The twin of step 2's bitmap fill. Fill 16384 to 22527 with a pattern byte from BASIC, time it against step 2's 2468 frames and against a count of T-states, and show the screen layout, with a fill that goes down the screen in screen order.
+- **New concepts.** `INC L` and `INC H`; `AND n`, `OR n`; `RET Z`, `RET NZ`, `RET C`; `HALT` (slowing a routine to one line a frame); two nested loops, 192 lines of 32 counted with `DJNZ`; the next-line-down routine `nxtdn`; the attribute address from a bitmap address; contended memory again, and a loop of 24 T-states (3 times 8) falling into step with the ULA. The "For info" aside, a blockquote in the lesson: the address bits `010TTRRR CCCXXXXX`, moving with `INC L` / `INC H`, crossing a character row and a third, `nxtdn`, the attribute address, and why the layout suits the hardware (the ULA reads a bitmap byte and its attribute in DRAM page mode, which needs them to share the row address, the low address lines; Chris Smith, "The ZX Spectrum Dynamic Memory Control", zxdesign.info, 2008) and the code (worded as a happy result, not a confirmed design aim). Step 2's lesson now uses the same letters.
+- **Program.** `step8-bitmap.asm` (187 bytes at 50000, loaded with `LOAD ""CODE`; parameters `pattern`, `times`, `where`, `slow` at 50000–50004): `fill` (loop, 50005), `fldir` (`LDIR`, 50030), `rows` (192×32 in memory order, 50056), `sdown` (192×32 in screen order with `nxtdn`, 50085), `nxtdn` (50130), `attr` (50145), and test entries `tdown` 50155, `tattr` 50164, `tincl` 50173, `tinch` 50180. Drivers: `step8-bitmap.bas` (slowed `rows` and `sdown` to watch, the loop and `LDIR` once each, then 50 fills of each on the screen and at 32768, set beside step 2) and `step8-examples.bas` (every worked example of the aside, in hex, binary and decimal). `step8-contention.py` is an optional count with the contention delays.
+- **Tested.** pasmo and z80asm give the same 187 bytes. Fuse, 48K, three runs, the same each time, 50 fills: on the screen, loop 178, `LDIR` 120, rows 136, down 126 frames; at 32768, 175, 95, 127, 126. One fill on the screen: 3.56, 2.4, 2.72, 2.52 frames, 693, 1028, 907 and 979 times as fast as step 2. Count without contention 171.5, 92.4, 124.8, 123.6; with contention 174.1, 117.1, 132.2, 123.7. `sdown` did not wait for the ULA at all. Slowed fills (2 `HALT`s a line): 384 frames each; `sdown` with 1: 192. Worked examples in Fuse: `INC L` 16384→16385, `INC H` 16384→16640, seven `INC H` →18176; `nxtdn` 16384→16640, 18176→16416, 18400→18432, 20448→20480; 191 lines down from 16384 is 22496, one more is 22528; `attr` 16384→22528, 16416→22560, 18432→22784, 18501→22853. Try-this checks: the letter A drawn with `POKE 16453+256*P`.
 
-#### For info (planned aside): why the screen is in thirds, and interleaved
-
-A plain-text aside in the step 8 lesson, set off from the main text, for readers who want to know why the bitmap is laid out so strangely. It is not needed for the fill itself, which writes every byte and does not care about the order, but it is what makes drawing in machine code easy in Chapter 4.
-
-**The address bits.** A bitmap address, written as its high byte and its low byte, is:
-
-```
-H = 0 1 0 T T R R R      L = C C C X X X X X
-```
-
-- `010` is fixed: it puts the bitmap at `$4000`–`$57FF`.
-- `TT` is the third of the screen, 0 to 2.
-- `RRR` is the pixel row inside the character cell, 0 to 7.
-- `CCC` is the character row inside the third, 0 to 7.
-- `XXXXX` is the column, 0 to 31.
-
-So H holds the third and the pixel row, and L holds the character row and the column. (Step 2 wrote the same layout as `010TTLLL RRRCCCCC`, with different letters. When this aside is written, the two lessons should use the same letters; Dalix's letters above are the ones to keep.)
-
-**Moving around with one instruction.**
-
-- `INC L` moves one column to the right: `$4000` (16384) becomes `$4001` (16385).
-- `INC H` moves down one pixel line inside the same character cell: `$4000` (16384) becomes `$4100` (16640). Seven `INC H`s from `$4000` reach `$4700` (18176), the bottom line of the top-left cell. That is the `STEP 256` loop from step 2, now one instruction per line.
-
-**Crossing a character row.** From the bottom line of a cell, `INC H` does not go to the next cell down. `$4700` plus one in H is `$4800` (18432), which is the top of the middle third. To go from pixel row 7 of character row 0 to pixel row 0 of character row 1, take 7 off H (back to `RRR` = 0) and add 32 to L (one more `CCC`): `$4700` (18176) becomes `$4020` (16416). That is the address step 2's "Try this" used for the top line of row 1.
-
-**Crossing a third.** At character row 7 of a third, L is `$E0` or more. Adding 32 to L overflows past 255, and the carry is the sign that we have left the third. Then H must go up by 8 instead (`TT` plus one, `RRR` back to 0): from the bottom line of row 7, `$47E0` (18400), the next line down is `$4800` (18432), the top of row 8.
-
-The usual "next line down" routine puts these three cases together. The plan is to show it, and to test it in Fuse on the three worked addresses above:
-
-```
-        inc h           ; down one pixel line
-        ld a,h
-        and 7           ; still inside the same cell?
-        ret nz          ; yes: done
-        ld a,l
-        add a,32        ; next character row
-        ld l,a
-        ret c           ; carry: crossed into the next third, H is already right
-        ld a,h
-        sub 8           ; same third: undo the carry into TT
-        ld h,a
-        ret
-```
-
-Worked through: `$4000` gives `$4100`; `$4700` gives `$4020`; `$47E0` gives `$4800`; `$4FE0` (20448) gives `$5000` (20480), the top of the bottom third.
-
-**The attribute for a bitmap address.** The attribute address is `$5800 + 32*(character row on the whole screen) + column`. Its low byte is the same `CCCXXXXX` as the bitmap's low byte, and its high byte is `$58` plus `TT`. So from any bitmap address in HL, the attribute is three rotates and an `OR`:
-
-```
-        ld a,h
-        rrca
-        rrca
-        rrca
-        and 3           ; keep TT
-        or $58
-        ld h,a          ; HL is now the attribute address
-```
-
-Worked through: `$4000` (16384) gives `$5800` (22528); `$4020` (16416) gives `$5820` (22560); `$4800` (18432) gives `$5900` (22784).
-
-**Why it is laid out like this.** For the code: the common moves are one-byte, four-cycle instructions. `INC L` goes across, `INC H` goes down a pixel line, and drawing an 8-line character or sprite column is eight `INC H`s with no 16-bit add. Only the move into the next character row or third costs more, and that happens once every eight lines. For the hardware: the ULA works out the screen address from its own line and column counters, and the layout lets those counter bits go straight onto the address lines, with no adding. It also means the bitmap byte and the attribute byte for a cell share the same low byte, and the ULA fetches both for each cell as it draws the line. The exact hardware reason (often given as a saving in the ULA's logic, and a good fit for the DRAM's row and column addressing) should be checked against a reliable source, such as Chris Smith's book on the ZX Spectrum ULA, before the lesson states it as fact.
+The aside as it was planned is now in the lesson, `step8-bitmap.md`, section "For info: why the screen is in thirds, and interleaved".
 
 ### Step 9 — The interactive fill, now fast
 
@@ -224,4 +164,4 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 7.
+The next lesson to write is step 9.
