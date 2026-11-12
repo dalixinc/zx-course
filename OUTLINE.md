@@ -8,9 +8,9 @@ This is not a beginner's course from a blank slate. It starts from first princip
 
 ---
 
-## Part 1 — The Spectrum: design, memory, and the screen
+## Chapter 1 — The Spectrum: design, memory, and the screen
 
-What the machine is, and why the screen behaves as it does.
+What the machine is, and why the screen behaves as it does. The notes and the first fill live in [chapter-01-the-machine](chapter-01-the-machine/).
 
 1. The hardware in brief: Z80, 16K ROM, 48K RAM, the ULA, keyboard, border, and speaker.
 2. The memory map: ROM (`0`–`16383`), the display file (`16384`–`22527`), attributes (`22528`–`23295`), system variables, and the space left for programs.
@@ -21,11 +21,11 @@ Checkpoint: you can point to a pixel or a character cell and say where its bits 
 
 ---
 
-## Part 2 — BASIC, building up to a tiny game
+## Chapter 2 — BASIC, building up to a tiny game
 
-Clear BASIC programs, each one tested, each one adding a little, until there is a small game. The notes and listings live in [chapter-01-the-machine](chapter-01-the-machine/) (the machine itself) and [chapter-02-bat-and-ball](chapter-02-bat-and-ball/) (the game).
+Clear BASIC programs, each one tested, each one adding a little, until there is a small game. The notes and listings live in [chapter-02-bat-and-ball](chapter-02-bat-and-ball/).
 
-The bat-and-ball game in Chapter 2 is built in these steps, each one tested before the next:
+The bat-and-ball game is built in these steps, each one tested before the next:
 
 1. A bouncing ball (`PRINT AT`).
 2. A bat you move with `INKEY$` (O left, P right).
@@ -33,53 +33,34 @@ The bat-and-ball game in Chapter 2 is built in these steps, each one tested befo
 4. A user-defined graphic for the ball.
 5. A little random deflection on the bounce, so the path is not always a perfect diagonal.
 6. `BEEP` sounds: a lower pitch when the ball hits the bat, a higher pitch when it hits a wall or a brick.
-7. Score, lives, game over, and a win when the wall is cleared.
+7. Score, lives, a game-over screen, and a win if you clear the wall.
 
 The earlier BASIC ideas — `PRINT`, `BORDER`, `INK`, `PAPER`, variables, `IF`, `FOR`, and so on — are taught in the steps as they are needed, rather than as a separate first pass.
 
-A wrap-up of the BASIC, and the measurements that show why we stop here, is in [chapter-02-bat-and-ball/summary.md](chapter-02-bat-and-ball/summary.md).
+The slowness of BASIC animation is useful here: it is why Chapter 3 exists. A short wrap-up of what we learned, and why BASIC has gone about as far as it can, is in [chapter-02-bat-and-ball/summary.md](chapter-02-bat-and-ball/summary.md).
 
 ---
 
-## Proposed numbering from here (for review)
+## Chapter 3 — The memory map, BASIC fills, then the same fills in machine code
 
-Dalix has asked for the machine-code work to be Chapter 3. The original outline split what comes next into Part 3 (`POKE` fills in BASIC, then an interactive fill) and Part 4 (the same fills in Z80, to show the speed jump). The proposal is to fold those two parts into one chapter, starting with `PEEK` / `POKE` in BASIC as the bridge, then repeating the fills in machine code. The Invaders-style game and the sprite engine would become Chapters 4 and 5.
+The original plan had this as two parts: screen fills with `POKE` in BASIC, then the same fills in Z80. They are now one chapter, so the speed jump is seen in the same place. The plan is in [chapter-03-machine-code/PLAN.md](chapter-03-machine-code/PLAN.md).
 
-- Chapter 1 — The machine (unchanged; was Part 1)
-- Chapter 2 — Bat and ball, and a wrap-up of BASIC (unchanged, plus the summary above)
-- Chapter 3 — From `POKE` to Z80 machine code (proposed fold of Parts 3 and 4). The detailed plan is in [chapter-03-machine-code/PLAN.md](chapter-03-machine-code/PLAN.md).
-- Chapter 4 — A simple Space Invaders-style game (was Part 5)
-- Chapter 5 — A parameter-driven sprite engine (was Part 6)
+The agreed order is the memory map and system variables first, then BASIC fills (including a slow interactive fill), then Z80.
 
-The original Part 3 to Part 6 headings are kept below until this is agreed.
+1. The 48K memory map in enough detail to place a routine safely: `CLEAR`, `RAMTOP`, and a few system variables (`FRAMES`, `LAST K`, `UDG`, `ATTR P`).
+2. `PEEK` and `POKE`. Fill a character cell, a pixel row, the whole bitmap (`16384`–`22527`), and the attributes (`22528`–`23295`), and time the last two.
+3. Bit patterns: solid, stripes, chequer, dither — seeing how a byte becomes eight pixels.
+4. A slow interactive fill in BASIC: you pick the attribute and the bit pattern, and the program fills the screen with them.
+5. What machine code is: bytes in RAM, and calling them with `USR` / `RANDOMIZE USR`. The Z80 in small pieces: registers (A, F, BC, DE, HL), `LD`, a counted loop, then `LDIR` when it helps.
+6. The same fills rewritten in machine code, timed side by side with the BASIC versions, so the speed increase is measured, not just claimed.
+7. A fast interactive fill that uses the machine-code routine and a BASIC menu.
+8. Just enough more for later chapters: the stack, `CALL` / `RET`, `DJNZ`, and waiting on the frame (`HALT`).
 
----
-
-## Part 3 — Screen fills with POKE, then an interactive fill (proposed: fold into Chapter 3)
-
-The aim is to think in Spectrum screens again: bitmap bytes and attribute bytes, not `PRINT` and `PLOT`.
-
-1. `PEEK` and `POKE`. Poke one display-file byte and one attribute byte, and see the result.
-2. Fill a character cell, then a pixel row, then the whole bitmap (`16384`–`22527`).
-3. Fill the attributes separately (`22528`–`23295`).
-4. Bit patterns: solid, stripes, chequer, dither — seeing how a byte becomes eight pixels.
-5. An interactive fill: you pick the attribute and the bit pattern, and the program fills the screen with them.
+Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space. The course assembler is pasmo, using `--tapbas` to write a tape with a short BASIC loader.
 
 ---
 
-## Part 4 — The same fills in machine code (proposed: fold into Chapter 3)
-
-Machine code from first principles, using the fills from Part 3 so the speed jump is obvious.
-
-1. What machine code is: bytes in RAM, and calling them with `USR` / `RANDOMIZE USR`.
-2. The Z80 in small pieces: registers (A, F, BC, DE, HL), `LD`, a counted loop, then `LDIR` when it helps.
-3. The same fills as Part 3, rewritten in machine code: bitmap, attributes, and patterned fills.
-4. Side by side with the BASIC versions, so the speed increase is measured, not just claimed.
-5. Just enough more for later parts: the stack, `CALL` / `RET`, `DJNZ`, and waiting on the frame (`HALT`).
-
----
-
-## Part 5 — A simple Space Invaders-style game (proposed: Chapter 4)
+## Chapter 4 — A simple Space Invaders-style game
 
 A small machine-code game that does not need clever sprites. Character cells or simple block graphics are enough.
 
@@ -90,11 +71,11 @@ A small machine-code game that does not need clever sprites. Character cells or 
 5. Collisions, score, lives, and game over.
 6. The pieces put together, tested as they go in.
 
-This is the bridge to Part 6: once things need to move smoothly over a background, character blocks are no longer enough.
+This is the bridge to Chapter 5: once things need to move smoothly over a background, character blocks are no longer enough.
 
 ---
 
-## Part 6 — A parameter-driven sprite engine (proposed: Chapter 5)
+## Chapter 5 — A parameter-driven sprite engine
 
 A generic sprite engine that can drive more than one kind of game, rather than a one-off blit for a single size.
 
@@ -110,7 +91,7 @@ Around those:
 2. Masked drawing, and saving/restoring the background (including the order of restore when two sprites overlap).
 3. Wiring size, frames, and scroll steps as parameters, then a short demo with two different sprite sizes running from the same engine.
 
-Existing sprite-engine notes from the trilogy can be used as a reference later. This part still builds the generic engine from the ideas in Parts 1–5, not by lifting game code.
+Existing sprite-engine notes from the trilogy can be used as a reference later. This part still builds the generic engine from the ideas in Chapters 1–4, not by lifting game code.
 
 ---
 
@@ -118,4 +99,4 @@ Existing sprite-engine notes from the trilogy can be used as a reference later. 
 
 This course ends at the generic sprite engine.
 
-Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the chapters above.
+Later, once the Atlantis trilogy is finished, the same work moves on to a Java version, and then to a mobile game. Those are separate stages, not part of the five chapters above.

@@ -7,7 +7,7 @@ The original course outline split the next work into two parts:
 - **Part 3** — screen fills with `POKE` in BASIC, then an interactive fill in which the user picks an attribute and a bit pattern.
 - **Part 4** — the same fills rewritten in Z80 machine code, so the speed jump is measured, not just claimed.
 
-Dalix now calls the machine-code work Chapter 3. The proposal is to **fold Parts 3 and 4 into this one chapter**: start with `PEEK` / `POKE` fills in BASIC as the bridge from Chapters 1 and 2, then do the same fills in Z80, with a timing comparison against numbers we already have. The Space Invaders-style game and the sprite engine would then become Chapters 4 and 5. That numbering is marked as proposed in [OUTLINE.md](../OUTLINE.md), and is an open decision.
+Those two parts are now one chapter. Chapter 3 starts with the memory map and the system variables, then `PEEK` / `POKE` fills in BASIC as the bridge from Chapters 1 and 2, then the same fills in Z80, with a timing comparison against numbers we already have. The Space Invaders-style game is Chapter 4, and the sprite engine is Chapter 5.
 
 ## What this chapter is for
 
@@ -21,16 +21,11 @@ Chapter 3 should make those limits concrete, then cross them:
 - Fill the attributes and the bitmap in machine code, and time them in Fuse against the BASIC fills above.
 - Finish with an interactive fill that is fast enough to use.
 
-## Proposed fold, for a decision
+## The shape of the chapter
 
-**Recommended order.** Teach the map and the system variables first, then a short run of BASIC `POKE` fills (a recap and an extension of Chapter 1, including a timed attribute fill and a first version of the interactive fill, which will be slow). Then introduce the Z80 from first principles, load a tiny routine, and repeat the fills in machine code, with timings. End on a fast interactive fill that uses the machine-code routine and a BASIC menu.
+The agreed order is: the map and the system variables first, then a short run of BASIC `POKE` fills (a recap and an extension of Chapter 1, including a timed attribute fill and a first version of the interactive fill, which will be slow). Then introduce the Z80 from first principles, load a tiny routine, and repeat the fills in machine code, with timings. End on a fast interactive fill that uses the machine-code routine and a BASIC menu.
 
-The other reasonable shapes, if this is wrong:
-
-- Do the BASIC fills first (straight after Chapter 2) and only then open the map and the Z80. Slightly quicker to a visible fill; the map arrives later than we need it for `CLEAR` and `USR`.
-- Skip a BASIC interactive fill and only make the fill interactive once the machine-code version is fast. Less repetition; you wait longer for the "pick a pattern" program.
-
-The recommendation is the first of these: one slow interactive fill in BASIC is useful, because the later one can be compared with it, and the map has to come before we put code in RAM.
+The map has to come before we put code in RAM. One slow interactive fill in BASIC is useful, because the later one can be compared with it.
 
 ## Addresses we will teach
 
@@ -49,7 +44,7 @@ These are the standard 48K figures, checked against Chapter 25 of the official Z
 | `RAMTOP` (system variable 23730) | | Address of the last byte of the BASIC system area. In Fuse, after a fresh 48K start, `PEEK 23730+256*PEEK 23731` was **65367**. |
 | Just above `RAMTOP`, to 65535 | | The UDG area by default, then the end of RAM. In the same Fuse check, the `UDG` pointer (23675) was **65368**, which is `RAMTOP+1`. 21 characters of eight bytes use the rest of memory up to 65535. |
 
-`CLEAR n` sets `RAMTOP` to `n` and forgets the BASIC variables. The usual way to reserve space for machine code is to `CLEAR` just below the address we intend to use (for example `CLEAR 49999` and put the routine at 50000), so that BASIC, its stack and its garbage collection stay below the code and cannot overwrite it. That is the convention this chapter should teach. The printer buffer is a historical 256-byte trick and is a poor place for anything we will want to grow.
+`CLEAR n` sets `RAMTOP` to `n` and forgets the BASIC variables. The usual way to reserve space for machine code is to `CLEAR` just below the address we intend to use (for example `CLEAR 49999` and put the routine at 50000), so that BASIC, its stack and its garbage collection stay below the code and cannot overwrite it. That is the convention this chapter should teach. We may move the origin lower later if a later chapter needs more space. The printer buffer is a historical 256-byte trick and is a poor place for anything we will want to grow.
 
 `P RAMT` at 23732 is the last byte of physical RAM (65535 on a 48K). Worth a mention; we will not poke it.
 
@@ -72,12 +67,11 @@ The manual marks some variables with X (poking them can crash the machine) or N 
 
 - **Fuse** (48K), as in Chapters 1 and 2, with `--speed 100` for timings. Fuse also has a built-in debugger, which we can use to single-step a routine and watch the registers, once there is a routine to look at.
 - **zmakebas**, to build BASIC loaders and the early BASIC-only steps, as before.
-- **pasmo** (0.5.3 is on this machine). This should be the assembler the lessons use: it can write a raw binary (`--bin`) or a tape, and `--tapbas` emits a TAP with a short BASIC loader around the code.
-- **z80asm** is also installed, and can write a binary and a listing. Useful as a cross-check; not the default, because it does not build a TAP with a loader for us.
+- **pasmo** is the assembler for the course, including later chapters. It can write a raw binary (`--bin`) or a tape, and `--tapbas` emits a TAP with a short BASIC loader around the code. That one-command tape is why we use it.
 
 All programs are tested in Fuse before they are shown, as usual.
 
-## Proposed steps
+## Steps
 
 Each step is one short, tested piece of work, in the Chapter 2 manner. Titles are working titles.
 
@@ -107,7 +101,7 @@ Each step is one short, tested piece of work, in the Chapter 2 manner. Titles ar
 - **Goal.** The user picks an attribute and a bit pattern, and the program fills the screen with them. It will be slow; that is the point.
 - **New concepts.** A tiny menu or prompted input (`INPUT`, or keys with `INKEY$`) for a paper/ink pair and a byte pattern (`BIN` or a small set of named patterns: solid, stripes, chequer).
 - **Program.** BASIC only. Reuses the fill loops from step 3.
-- **How we test.** Fuse: choose two different patterns and two attributes, and check the screen by eye. Time one fill if it is easy, so step 11 has a number to beat.
+- **How we test.** Fuse: choose two different patterns and two attributes, and check the screen by eye. Time one fill if it is easy, so step 9 has a number to beat.
 
 ### Step 5 — The Z80 in small pieces, and a first routine
 
@@ -119,7 +113,7 @@ Each step is one short, tested piece of work, in the Chapter 2 manner. Titles ar
 ### Step 6 — Calling code: `CLEAR`, `DATA` / `POKE`, then an assembler
 
 - **Goal.** The same "return 42" routine, first as hand-poked bytes (a recap of step 5), then as a source file assembled with pasmo, loaded from a tape that includes a BASIC loader.
-- **New concepts.** Origin addresses (`ORG 50000`); `pasmo --tapbas` (and `--bin` if we want the raw bytes); how the loader does `CLEAR` and `RANDOMIZE USR` (or `PRINT USR`); a mention that z80asm can also assemble, but that pasmo is what we will use to make the tape.
+- **New concepts.** Origin addresses (`ORG 50000`); `pasmo --tapbas` (and `--bin` if we want the raw bytes); how the loader does `CLEAR` and `RANDOMIZE USR` (or `PRINT USR`).
 - **Program.** A few lines of assembler, the TAP that pasmo writes, and a short note on the BASIC loader it emits.
 - **How we test.** Assemble on this machine, load the TAP in Fuse, and get the same 42 as in step 5. If the loader's `CLEAR` is wrong, the machine will crash or the number will be wrong; that is a test, not a surprise.
 
@@ -146,14 +140,14 @@ Each step is one short, tested piece of work, in the Chapter 2 manner. Titles ar
 
 ## What this chapter will not do yet
 
-Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belong in the following chapter (proposed Chapter 4). This chapter stops when we can place code safely, call it from BASIC, fill the screen quickly, and have measured the difference.
+Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belong in the following chapter (Chapter 4). This chapter stops when we can place code safely, call it from BASIC, fill the screen quickly, and have measured the difference.
 
-## Open decisions
+## Decisions
 
-1. Fold original Parts 3 and 4 into Chapter 3, and renumber the Invaders game and the sprite engine as Chapters 4 and 5?
-2. Accept the recommended order (map and system variables, BASIC fills, then Z80), or prefer one of the alternatives above?
-3. Include a slow interactive fill in BASIC (step 4), or only the fast one at the end?
-4. Lead with pasmo (recommended, because of `--tapbas`), and treat z80asm as a second assembler we mention but do not require?
-5. Default code address: `CLEAR 49999` / `ORG 50000` (recommended), unless a later step has a reason to move it?
+1. Original Parts 3 and 4 are folded into Chapter 3. The Invaders-style game is Chapter 4, and the sprite engine is Chapter 5.
+2. Order: memory map and system variables first, then BASIC fills, then Z80.
+3. There is a slow interactive fill in BASIC (step 4), and a fast one at the end.
+4. pasmo is the course assembler throughout, using `--tapbas`.
+5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-Once these are agreed, the first lesson can be written and tested in Fuse in the usual way.
+The first lesson can now be written and tested in Fuse in the usual way.
