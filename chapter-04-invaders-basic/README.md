@@ -8,6 +8,7 @@ A Space Invaders-style game in pure Sinclair BASIC, built in steps and tested in
 4. [Marching the block](step4-march.md) — `step4-march.bas` / `step4-march.tap`
 5. [Shot versus invader](step5-hits.md) — `step5-hits.bas` / `step5-hits.tap`
 6. [Invaders' bombs](step6-bombs.md) — `step6-bombs.bas` / `step6-bombs.tap`
+7. [Shields](step7-shields.md) — `step7-shields.bas` / `step7-shields.tap`
 
 Chapter 5 rebuilds the same game in machine code, in the same order, so the two versions can be compared for speed and for how the programs are written.
 
