@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 6 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. Steps 1 to 7 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -129,12 +129,12 @@ Steps 4 and 5 are the bridge: step 4 hand-assembles a first routine, and step 5 
 - **Program.** `step6-sysvars.asm` (`--tapbas`): step 1's screen after `CLEAR 49999`, with a table-driven loop for the seven two-byte variables, then `CHARS`, `ATTR P`, `BORDCR`, `FRAMES` and `LAST K`, timed with `FRAMES`, ENTER to return. `step6-basic.bas`: the same screen in BASIC, with step 1's statements, timed the same way. `step6-examples.asm` + `step6-examples.bas`: thirteen small examples, including timings of the two number printers and of CLS.
 - **Tested.** pasmo and z80asm give the same bytes for both source files. Fuse, 48K: `PROG` 23755, `RAMTOP` 49999, `UDG` 65368, `P RAMT` 65535, `CHARS` 15360, `ATTR P` 7, `BORDCR` 7, `LAST K` 99 after `c`, all as in step 1; `VARS` 23826, `E LINE` 23827 (matching BASIC `PEEK`s afterwards), `STKEND` 23832, free 26167. The table took 12 frames in machine code (three runs) and 35 in BASIC: about three times as fast, because CLS (about 3 frames) and the ROM drawing characters take most of the time. 100 numbers: `pnum` 14 frames, PRINT-FP 49. OUT-NUM-1 printed 12345 as `<345` and 49999 as `0`.
 
-### Step 7 — The attribute fill in machine code, timed
+### Step 7 — The attribute fill in machine code, timed (written)
 
-- **Goal.** The twin of step 2's attribute fill. Step 4's loop, then `LDIR`, both timed with the same `FRAMES` method.
-- **New concepts.** `LDIR` as a counted block copy (seed the first byte, then copy 767 times, with HL one behind DE); passing the colour in from BASIC through the inbox byte (or in BC); contended memory, in outline, as the reason a cycle count will not match a wall clock exactly.
-- **Program.** Assembler, `org 50000`, called with `RANDOMIZE USR` after a `POKE` of the colour.
-- **How we test.** Fuse: the whole 32x24 grid changes colour (22 lines or all 24 is a small design choice). Time 100 calls minus 100 empty calls, as in step 4, for the loop and for `LDIR`, and set both beside step 2's 325 frames.
+- **Goal.** The twin of step 2's attribute fill. Step 4's loop, then `LDIR`, both timed with the same `FRAMES` method, and checked against a count of T-states.
+- **New concepts.** Parameter bytes at the start of the code (`colour`, `times`, `where`), poked by BASIC and read with `LD A,(nn)` and `LD HL,(nn)` / `LD DE,(nn)`; `LD (HL),r`; `LDIR` (HL from, DE to, BC count; 21 T-states a byte, 16 for the last; flags; BC = 0 means 65536; interruptible), with `LDI`, `LDD` and `LDDR` named; filling by copying a block onto itself one byte along (HL one behind DE); a repeat count in D, or on the stack with `PUSH AF`; T-states, 3.5 MHz and 69888 T-states a frame; contended memory, in outline, from the Sinclair Wiki's rules. All 24 rows are filled, as in step 2.
+- **Program.** `step7-attrfill.asm` (55 bytes at 50000, loaded with `LOAD ""CODE`; `fill` at 50004, `fldir` at 50029) and the driver `step7-attrfill.bas`: one visible fill of each kind, then 250 of each timed on the screen and 250 of each at 60000, set beside step 2's 325 frames. `step7-contention.py` counts the T-states with the contention delays.
+- **Tested.** pasmo and z80asm give the same 55 bytes. Fuse, 48K, three runs, the same each time: 250 fills on the screen took 112 frames (loop) and 76 (`LDIR`); at 60000, 110 and 60. One fill: 0.448 and 0.304 frames, 725 and 1069 times as fast as step 2. The count without contention says 107.3 and 58.0; with contention, 109.0 and 73.4; Fuse is 2 to 3 frames over each, the BASIC around the call and the interrupt routine. Contention costs the loop 2 frames and `LDIR` 16, so on the screen `LDIR` is only 1.47 times as fast as the loop (1.83 in plain memory). Try-this checks: N=100 gave 45, 31, 45, 24; N=256 with `POKE 50001,0` gave 114, 77, 112, 61; colour 184 flashed; the ROM-to-screen `LDIR` example ran.
 
 ### Step 8 — The bitmap fill in machine code, timed
 
@@ -224,4 +224,4 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 7.
+The next lesson to write is step 8.
