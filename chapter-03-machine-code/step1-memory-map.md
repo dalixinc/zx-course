@@ -4,9 +4,9 @@ Before we put any machine code into the Spectrum, we need to know where it can g
 
 The program is a memory map explorer. It prints the fixed parts of the map, then `PEEK`s seven system variables and prints where the BASIC program starts, where its variables are, where its working space ends, where `RAMTOP` is, and how much free memory is left. It draws the whole 64K as a coloured bar. Then, after a key press, it does `CLEAR 49999` and prints everything again beside the first set of figures, so you can see what moved and what did not. It finishes by showing three more system variables and the `FRAMES` counter ticking.
 
-That `CLEAR 49999` is the one line in this chapter that matters most. From step 5 onwards our machine code lives at 50000, and this step shows why it is safe there. We may move it lower later if we need more room.
+That `CLEAR 49999` is the one line in this chapter that matters most. From step 4 onwards our machine code lives at 50000, and this step shows why it is safe there. We may move it lower later if we need more room.
 
-No assembler yet. pasmo comes in step 6. This step is BASIC only.
+No assembler yet. pasmo comes in step 5. This step is BASIC only.
 
 Every program is tested in a 48K emulator before it is shown.
 
