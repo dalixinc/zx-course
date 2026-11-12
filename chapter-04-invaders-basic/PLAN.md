@@ -27,7 +27,7 @@ Each step below gives the goal, the new keywords, a note on the program, and the
 
 - **Goal.** A player base at the bottom of the screen, drawn as a UDG, that moves left and right with O and P and stops at the edges.
 - **New keywords.** Several of these are a recap from Chapter 2, used together in a new game: `INKEY$`, `PRINT AT`, `CHR$`, `POKE USR "a"`, `BIN`, `DATA` / `READ` / `RESTORE`. The new work is a UDG for a base rather than a ball, and a single object that only moves when a key is held.
-- **Program.** `step1-base`. A short loop: read O and P, rub out the base, step one column, reprint it. The status row stays clear. With only the base to draw, this step may feel brisk; a small delay can be added so the base is steerable, and taken out later if the loop has enough to do.
+- **Program.** `step1-base`. A short loop: read O and P, rub out the base, step one column, reprint it. The status row stays clear. With only the base to draw, the step is brisk: measured in Fuse, one move takes about 2.4 frames, so the base crosses the screen in about a second and a half. No delay is added, because each later step adds work to the loop; a `FOR` delay is a "Try this" instead.
 - **What machine code will fix.** The base can only move a whole cell at a time, and its speed is tied to how long the rest of the loop takes. In Chapter 5 the same control can be frame-synced with `HALT`, and, if we choose, a pixel at a time.
 
 ### Step 2 — One shot
