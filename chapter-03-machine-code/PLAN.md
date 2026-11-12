@@ -1,6 +1,6 @@
 # Chapter 3 — Plan: Z80 machine code, the memory map, and the system variables
 
-This is the plan for the chapter. Steps 1 to 8 are written and tested; the rest is still a plan. We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
+This is the plan for the chapter. All nine steps are written and tested, and the chapter wrap-up is in [summary.md](summary.md). We write and test the steps one at a time, in the same style as Chapter 2, and Dalix checks each one before it is merged.
 
 The original course outline split the next work into two parts:
 
@@ -73,7 +73,7 @@ All programs are tested in Fuse before they are shown, as usual.
 
 ## Steps
 
-Each step is one short, tested piece of work, in the Chapter 2 manner. Steps 1 to 8 are written; the titles of the others are working titles.
+Each step is one short, tested piece of work, in the Chapter 2 manner. All nine are written.
 
 The first draft of this plan had nine steps. The memory map and the system variables turned out to fit in one program, so the first two planned steps became step 1, and everything after moved up by one. The list below is the chapter as it is being written.
 
@@ -145,12 +145,14 @@ Steps 4 and 5 are the bridge: step 4 hand-assembles a first routine, and step 5 
 
 The aside as it was planned is now in the lesson, `step8-bitmap.md`, section "For info: why the screen is in thirds, and interleaved".
 
-### Step 9 — The interactive fill, now fast
+### Step 9 — The interactive fill, now fast (written)
 
 - **Goal.** The twin of step 3. The step 3 program, with the machine-code fills underneath: pick an attribute and a bit pattern, see the screen change at once.
 - **New concepts.** A BASIC front end around `USR` calls; perhaps two entry points (attributes, bitmap) or one routine with a parameter in BC.
 - **Program.** The step 3 program, with its two fill subroutines replaced by `USR` calls to the routines from steps 7 and 8. BASIC asks the questions, machine code does the filling.
 - **How we test.** Fuse: the same choices as in step 3, now quick enough to try several in a row. A `FRAMES` reading around each fill, set beside the step 3 figures.
+- **As written.** `step9-fastfill.asm` (103 bytes at 50000, loaded with `LOAD ""CODE`; parameters `pattern`, `colour`, `times`, `slow` at 50000–50003): `bitmap` (50004) and `attrs` (50015) load A, HL and BC and share one `LDIR` routine, `ldfill`, which repeats `times` times with HL, BC and the count on the stack; `sdown` (50043), `wait` and `nxtdn` are step 8's, with `sdown` fixed at 16384. Driver `step9-fastfill.bas`: step 3's program with lines 40–110 replaced by three lines of `POKE` and `RANDOMIZE USR`, `CLEAR 49999` / `LOAD ""CODE` added, a new question for the fill order (0 memory order with `LDIR`, 1 screen order with `sdown`), and the table set beside step 3's 3699 and 489 frames. New concepts: one routine for two jobs with its inputs in registers, falling through, `LD D,H` / `LD E,L`, pushing and popping several values in order, a string `AND` a number in BASIC.
+- **Tested.** pasmo and z80asm give the same 103 bytes. Fuse, 48K, full input runs typed one key at a time, with bad answers (ink 9, order 5, patterns `1100` and `11021100`) rejected and asked again. Three runs, the same each time: 50 bitmap fills 121 frames in memory order (2.42 a fill, 1529 times as fast as step 3) and 128 in screen order (2.56, 1445 times); 250 attribute fills 77 frames (0.308, 1588 times). A fourth run read 122 for memory order, a frame of jitter. With the fill subroutines moved to line 1000, the same figures. A five-line test with the same code gave 120, 76 and 126, exactly steps 7 and 8. Try-this checks: `sdown` with one `HALT` a line, 192 frames; 256 `LDIR` fills, 610 frames for the bitmap and 77 for the attributes; filling by hand with 255/22 and then 0.
 
 ## What this chapter will not do yet
 
@@ -164,4 +166,4 @@ Pixel-accurate sprites, a game loop with `HALT`, and an Invaders-style game belo
 4. pasmo is the course assembler throughout, using `--tapbas`.
 5. Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space.
 
-The next lesson to write is step 9.
+Chapter 3 is complete. The open decisions for Chapter 4 are at the end of [summary.md](summary.md).

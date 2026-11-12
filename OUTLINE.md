@@ -58,6 +58,8 @@ The agreed order is the memory map and system variables first, then BASIC fills 
 
 Machine code starts at 50000, after `CLEAR 49999`. We may move it lower later if we need more space. The course assembler is pasmo, using `--tapbas` to write a tape with a short BASIC loader.
 
+All nine steps of Chapter 3 are written and tested. The wrap-up, with the BASIC against machine code timings and the open decisions for Chapter 4, is in [chapter-03-machine-code/summary.md](chapter-03-machine-code/summary.md).
+
 ---
 
 ## Chapter 4 — A simple Space Invaders-style game

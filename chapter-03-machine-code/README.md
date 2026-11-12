@@ -11,9 +11,11 @@ The memory map first, then screen fills in BASIC, then the same fills in Z80 mac
 7. [The attribute fill in machine code, timed](step7-attrfill.md) (twin of step 2) — `step7-attrfill.asm` + `step7-attrfill.bas` / `step7-attrfill.tap` (the code alone: `step7-attrcode.tap`); `step7-contention.py`, an optional T-state count with contended memory
 8. [The bitmap fill in machine code, timed](step8-bitmap.md) (twin of step 2), with the "For info" aside on why the screen is in thirds — `step8-bitmap.asm` + `step8-bitmap.bas` / `step8-bitmap.tap` (the code alone: `step8-bitcode.tap`), `step8-examples.bas` / `step8-examples.tap` (the aside's worked examples, with the same code); `step8-contention.py`, an optional T-state count with contended memory
 
-From step 6 on, each machine-code step is the twin of a BASIC step, in the same order, so the two can be compared for speed and for how the program is put together. The rest will be added here as they are written and checked:
+9. [The interactive fill, now fast](step9-fastfill.md) (twin of step 3) — `step9-fastfill.asm` + `step9-fastfill.bas` / `step9-fastfill.tap` (the code alone: `step9-fastcode.tap`)
 
-9. The interactive fill, now fast (twin of step 3)
+From step 6 on, each machine-code step is the twin of a BASIC step, in the same order, so the two can be compared for speed and for how the program is put together.
+
+[Chapter 3 wrap-up: what we learned, and BASIC against machine code](summary.md), with the open decisions for Chapter 4.
 
 The details are in [PLAN.md](PLAN.md).
 
