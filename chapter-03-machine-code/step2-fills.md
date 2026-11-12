@@ -139,7 +139,9 @@ That is about 8 milliseconds for every byte, for both fills (2468/6144 and 325/7
 
 `step2-fills.png` was taken about halfway through the bitmap fill, roughly 25 seconds in. The top third is finished, and the middle third has the first four pixel lines of each of its eight character rows, with gaps between them where the other four will go. `step2-fills-result.png` is the end: blue paper and yellow ink everywhere, and the two times printed over it.
 
-The Chapter 2 wrap-up gave 2446 frames for the bitmap and 341 for the attributes. Those were measured with a different listing, and the figures here are close to them, not the same. Small changes to the BASIC around a loop change its speed. For example, the six `REM` lines at the top of this listing cost time. With lines 1 to 6 taken out, and nothing else changed, the same program measured 2322 frames (46.44 seconds) for the bitmap and 306 (6.12 seconds) for the attributes. Every time `NEXT` goes back round the loop, the ROM finds the line it has to go back to by searching from the start of the program, one line at a time, so every line above the loop slows it down. The listing keeps its `REM` lines, because they are the course's rule and because the times in the table are the ones for the program as printed.
+The Chapter 2 wrap-up gave 2446 frames for the bitmap and 341 for the attributes. Those were measured with a different listing, and the figures here are close to them, not the same.
+
+> **Note: `REM` lines slow the loop down.** Small changes to the BASIC around a loop change its speed. For example, the six `REM` lines at the top of this listing cost time. With lines 1 to 6 taken out, and nothing else changed, the same program measured 2322 frames (46.44 seconds) for the bitmap and 306 (6.12 seconds) for the attributes. Every time `NEXT` goes back round the loop, the ROM finds the line it has to go back to by searching from the start of the program, one line at a time, so every line above the loop slows it down. The listing keeps its `REM` lines, because they are the course's rule and because the times in the table are the ones for the program as printed.
 
 ## Line by line
 
