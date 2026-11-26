@@ -38,11 +38,13 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 ### Step 2 — The bat, read with IN (twin of Chapter 2, step 2)
 
 - **Goal.** A four-cell bat on row 21, moved with O and P. The ball bounces off it, and a miss puts the ball back at its start. Space returns to BASIC.
-- **New.** `IN A,(254)` with a half-row in A; the eight half-rows and their bits; a 0 bit means the key is down; testing a bit with `AND` or `BIT`; holding O and P together, which `INKEY$` could not see; Space read the same way; the bat moving on its own beat, separate from the ball's.
+- **New.** `IN A,(254)` with a half-row in A; the eight half-rows and their bits; a 0 bit means the key is down; `CPL`; `BIT b,r`; `INC (HL)`, `DEC (HL)`, `SUB (HL)`; `XOR A`; `equ` sums; a row and column loaded as a pair with `LD BC,(nn)`; `JP` as the last call; holding O and P together, which `INKEY$` could not see; Space read the same way; the bat and the ball on their own beats, counted down once a frame.
+- **As written.** `step2-bat.asm`, 341 bytes, parameters at 50000 to 50013 (`halts`, `speed`, `bspeed`, `steps`, `hits`, `misses`, `col`, `row`, `dc`, `dr`, `bat`, `btime`, `ptime`), entry point 50014; driver `step2-bat.bas`; examples `step2-examples.asm` + `step2-examples.bas`, which show all eight half-rows and `INKEY$` side by side.
+- **Tested.** O and P held together: `IN` saw both (`11100`), `INKEY$` gave `""`, and the bat stayed put. P and Space together: both seen, and the game stopped. A pass with no `HALT` took 0.0192 of a frame; Chapter 2, step 2 took 4.1 frames a pass without its delay and 35.2 with it.
 
 ### Step 3 — The bricks (twin of Chapter 2, step 3)
 
-- **Goal.** Three rows of coloured bricks, drawn by filling attributes. The ball reads the attribute of the cell ahead, as `ATTR` did, rubs out a brick it hits, and bounces.
+- **Goal.** Three rows of coloured bricks, drawn by filling attributes. The ball reads the attribute of the cell ahead, as `ATTR` did, rubs out a brick it hits, and bounces. The ends of the bat steer the ball, as in Chapter 2, step 3.
 - **New.** The attribute address of a cell (`010110TT RRRCCCCC`); reading and writing the attribute byte; a brick wall drawn with a loop.
 
 ### Step 4 — A little randomness (twin of Chapter 2, step 5)
