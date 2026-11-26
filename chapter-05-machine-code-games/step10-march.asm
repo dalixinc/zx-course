@@ -164,8 +164,9 @@ fire:   push af         ; keep the keys
 nofire: pop af          ; the keys again
         ret
 
-; sstep: rub out the shot and move it up a row; on row 0 it goes off
-; the top and there is no shot any more. Changes A, B, C, DE, HL.
+; sstep: rub out the shot and move it up a row; from row 1 it goes, and
+; there is no shot any more, so row 0 is left for messages. Changes A,
+; B, C, DE, HL.
 
 sstep:  ld hl,(ssteps)
         inc hl
@@ -179,8 +180,8 @@ sstep:  ld hl,(ssteps)
         call nz,dinv    ; yes: draw the invader again
         ld hl,srow
         ld a,(hl)
-        and a           ; was it on row 0?
-        jr z,sgone      ; yes: it has left the screen
+        dec a           ; was it on row 1? (A = row - 1; srow is unchanged)
+        jr z,sgone      ; yes: it goes, and never rubs out row 0
         dec (hl)        ; one row up
         jr sdraw        ; and draw it there
 sgone:  ld (hl),255     ; no shot now

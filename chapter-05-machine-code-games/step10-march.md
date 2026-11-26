@@ -293,8 +293,9 @@ fire:   push af         ; keep the keys
 nofire: pop af          ; the keys again
         ret
 
-; sstep: rub out the shot and move it up a row; on row 0 it goes off
-; the top and there is no shot any more. Changes A, B, C, DE, HL.
+; sstep: rub out the shot and move it up a row; from row 1 it goes, and
+; there is no shot any more, so row 0 is left for messages. Changes A,
+; B, C, DE, HL.
 
 sstep:  ld hl,(ssteps)
         inc hl
@@ -308,8 +309,8 @@ sstep:  ld hl,(ssteps)
         call nz,dinv    ; yes: draw the invader again
         ld hl,srow
         ld a,(hl)
-        and a           ; was it on row 0?
-        jr z,sgone      ; yes: it has left the screen
+        dec a           ; was it on row 1? (A = row - 1; srow is unchanged)
+        jr z,sgone      ; yes: it goes, and never rubs out row 0
         dec (hl)        ; one row up
         jr sdraw        ; and draw it there
 sgone:  ld (hl),255     ; no shot now
@@ -879,7 +880,7 @@ A march step is 0.785 of a frame, about 54900 T-states, 1700 for each invader: a
 - **Every step moves the whole block.** The arcade game moves one invader a frame, so the block ripples and speeds up as it thins. That is a different design, and a good Try this for later.
 - **Shots still pass through.** Hits are step 11.
 - **The landing test is Chapter 4's.** It uses the block's rows, not its lowest living row, so a block with its bottom row shot away still lands when it would have.
-- **The message stays on row 0.** Nothing else uses row 0 yet; the score will, in step 14.
+- **The message stays on row 0.** Nothing else uses row 0 yet; the score will, in step 14. The shot stops at row 1, so it cannot rub the message out: the first version let it go up to row 0, and in step 11's tests a shot through a message there took letters with it. The fix is one instruction, `dec a` in place of `and a`, the same size, so no address in this lesson moved.
 
 ## Try this
 
