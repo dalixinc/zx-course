@@ -26,7 +26,10 @@ Part B, Invaders in machine code (twins of Chapter 4):
 13. [Shields](step13-shields.md) (twin of Chapter 4, step 7) — `step13-shields.asm` + `step13-shields.bas` / `step13-shields.tap`; a screen cell to the damage map, and a chip, `step13-examples.asm` + `step13-examples.bas` / `step13-examples.tap`
 14. [The whole game](step14-game.md) (twin of Chapter 4, step 8) — `step14-game.asm` + `step14-game.bas` / `step14-game.tap`; a number in digits, text from the ROM's letters, and each wave's row and speed, `step14-examples.asm` + `step14-examples.bas` / `step14-examples.tap`
 15. [Moving by pixels](step15-pixels.md) — `step15-pixels.asm` + `step15-pixels.bas` / `step15-pixels.tap`; the pixel line address, shifting at run time and in advance, XOR and masks, `step15-examples.asm` + `step15-examples.bas` / `step15-examples.tap`
+16. [A Kempston joystick](step16-joystick.md) (optional) — `step16-joystick.asm` + `step16-joystick.bas` / `step16-joystick.tap`; port 31, and a port with nothing on it, `step16-examples.asm` + `step16-examples.bas` / `step16-examples.tap`
 
 A summary of Part B, with every Invaders step set beside its BASIC twin in one table, is in [summary-part-b.md](summary-part-b.md).
+
+A summary of the whole chapter, with the open questions for Chapter 6, is in [summary.md](summary.md).
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).

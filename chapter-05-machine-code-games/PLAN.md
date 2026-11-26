@@ -136,6 +136,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step15-pixels.asm`, 2656 bytes: step 14's parameters plus `px` (120), `pstep` (2), `slines` (4), `dlines` (2) (50053 to 50056), entry point 50057; `bspeed` and `dspeed` now 1; `alive` at 52484; driver `step15-pixels.bas`; examples `step15-examples.asm` + `step15-examples.bas`.
 - **Tested.** A whole game (auto, seed 77): out of lives at 480 on wave 1, 3386 passes in 3417 frames; a test of every cell that should be empty found 0 stray cells in four games, one to wave 2. No `halt`: idle 0.018 (keys every pass), the base drawn 0.02 to 0.05 by its shift, the shot and the bomb 0.01, a march row 0.22. Examples: 510 draws in 25 frames shifted at run time, 11 from the copies. Frame budget: 973 passes in 973 frames from row 1, 181 in 181 on the shield rows.
 
+### Step 16 — A Kempston joystick (optional)
+
+- **Goal.** Read a Kempston joystick on port 31 beside the keys, so the stick or the keys play the same game, with BASIC asking whether there is one.
+- **New.** No new instructions. The port's bits (1 pressed, the opposite of the keyboard's); fire moved to Space's bit with `bit`/`set`; right and left already on P and O's bits; one input byte for two devices; a byte with any of the top three bits set ignored, since a port with no device gives 255; BASIC checks port 31 and says `NOTHING ON PORT 31: KEYS ONLY`.
+- **As written.** `step16-joystick.asm`, 2681 bytes: step 15's parameters plus `joy` (50057, 0 by default), entry point 50058; `alive` at 52509; driver `step16-joystick.bas`; examples `step16-examples.asm` + `step16-examples.bas`.
+- **Tested.** Fuse's `--kempston` with `--joystick-keyboard-*` options standing in for a stick (only a keyboard; no real stick): port bits 1, 2, 4, 8, 16 as in the table; the base moved right and left, stayed on both, fire made shots, up and down did nothing, the keys still worked with the stick on, the stick did nothing when `joy` was 0, and with no joystick the game said so and used the keys. A test copy without the top-bits check fired by itself. `rkeys` 0.0034 (`joy` 0) and 0.0043 (`joy` 1) of a frame. Frame budget as step 15's: 973 for 973 and 181 for 181 with `joy` 1.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
@@ -158,7 +165,7 @@ The graphics are Chapter 4's UDGs, copied as bytes into the code, so the two gam
 - **Step 15 — Moving by pixels.** The base sideways by pixels, then the shot and the bombs by pixel lines, so the move from cells to pixels is seen on a game that already works. This leads into Chapter 6's pre-shifted sprites.
 - **Step 16 — A Kempston joystick (optional).** Port 31, read beside the keys.
 
-A wrap-up for the whole chapter sets every timing beside its BASIC twin.
+A wrap-up for the whole chapter is in [summary.md](summary.md).
 
 ## What this chapter will not do yet
 
