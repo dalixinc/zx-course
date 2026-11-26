@@ -122,6 +122,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step13-shields.asm`, 1815 bytes: step 12's parameters plus `chips`, `stomps` (50040, 50041), entry point 50042; `shmap` at 51593, `alive` at 51635; driver `step13-shields.bas`; examples `step13-examples.asm` + `step13-examples.bas`.
 - **Tested.** Staged chips by shots, bomb chips, a shot through a hole; a low block wiped all 24 cells; a whole wave (auto, seed 77): 168 march steps, 6001 passes, 6002 frames. No `halt`: idle 0.0062 (Chapter 4: 6.8), a chip 0.015 (a 24-frame pass), a march step 0.88 on the shield rows against 0.83 above. Frame budget: march, bomb and shot every pass, from row 1 (2001 passes, 2002 frames) and all on the shield rows (201, 202): no overrun.
 
+### Step 14 — The whole game (twin of Chapter 4, step 8)
+
+- **Goal.** Score 30/20/10 by row, 3 lives with the next base in column 15, waves that start a row lower (to row 8) and 3 passes a step faster (to 4), game over by lives or by landing with another game from a key, the status line on row 0, and short clicks.
+- **New.** No new instructions. `pdec`, fixed-width digits from a table of powers of ten; `ptext` and `pchar`, the status line from the ROM's letters with our own print; two more ways out of the loop, with `over` telling BASIC why; `newwave` working out each wave from its number; clicks of one to three cycles; the march rippled a row a pass (`rip`, `mrow`, with `where`, `rtype` and `invat` knowing which rows have moved). Row 0 belongs to the status line, and the messages are on BASIC's game-over screen.
+- **As written.** `step14-game.asm`, 2377 bytes: step 13's parameters plus `score`, `lives`, `wave`, `over`, `rlen`, `rtime`, `quiet`, `mfirst`, `bfirst`, `nlives` (50042 to 50052), entry point 50053; `alive` at 52197; driver `step14-game.bas`, with the game-over screen at line 300; examples `step14-examples.asm` + `step14-examples.bas`.
+- **Tested.** A whole game (auto, seed 77): wave 1 cleared at exactly 640, wave 2 a row lower, out of lives at 1240. A lost base and the next in column 15; both game-over screens; another game from a key. No `halt`: idle 0.0075 (Chapter 4: 6.5), a march row 0.21, a click 0.06 to 0.07 (a `BEEP` 1.2), the score 0.05, the status line 0.4, a new wave 3.8. Frame budget: without the ripple 245 frames for 244 passes, and 48 for 46 on the shield rows; with it, 1013 for 1013 and 189 for 189.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
