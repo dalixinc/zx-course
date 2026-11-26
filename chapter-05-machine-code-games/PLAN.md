@@ -21,7 +21,7 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 4. **Movement.** By whole character cells first, as in Chapters 2 and 4, so each step is a like-for-like translation. Pixel movement comes later in the chapter, once the cell version of Invaders works (step 15 below), and leads into Chapter 6.
 5. **The keys.** The same keys as before: O and P to move, in both games, and Space to fire in Invaders. Chapter 2 did not use Q and A, so neither does this chapter. From step 2 on, the keys are read with `IN` from the keyboard half-rows, so several keys can be down at once, unlike `INKEY$`.
 6. **Kempston joystick.** A later, optional step (step 16), reading port 31. Fuse can emulate one.
-7. **Sound.** Clicks on the speaker, bit 4 of port 254, written with `OUT (254),A` from the loop, so a sound never stalls the game the way `BEEP` does. The border bits of the same port are kept black.
+7. **Sound.** Clicks on the speaker, bit 4 of port 254, written with `OUT (254),A` from the loop. A note still holds the loop while it plays, as `BEEP` does, so each is kept short enough to end before the next frame, and the border bits of the same port are kept as BORDCR has them.
 8. **Interrupts.** Left as BASIC leaves them, in interrupt mode 1, so the ROM's routine keeps `FRAMES` counting and scans the keyboard 50 times a second. `HALT` waits for that interrupt, once a frame. IY is not touched, because the ROM's interrupt routine needs it.
 9. **Lesson format.** As in Chapter 3's machine-code steps: an introduction; a subsection for each new instruction or idea (the syntax, the options, a tested example); the listing; the build commands for `windows-tools\build.bat` and `tools/build.sh`; what it showed in Fuse; line by line; the timing against BASIC; limitations; and "Try this". The source is commented on nearly every line. The BASIC driver keeps a `REM` for every variable.
 10. **Parameter bytes.** Each program starts with a few bytes at 50000 that BASIC can `POKE` and `PEEK` (speed, counters, positions), as in Chapter 3, steps 7 to 9. The entry point follows them.
@@ -59,7 +59,9 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 ### Step 5 — Speaker clicks (twin of Chapter 2, step 6)
 
 - **Goal.** A click or a short buzz on the bat, a wall, a brick and a miss, while the ball keeps moving.
-- **New.** Bit 4 of port 254; a pitch as a delay between flips of the speaker bit; keeping the border colour in bits 0 to 2.
+- **New.** Bit 4 of port 254 and `OUT (254),A`; a pitch as a delay between flips of the speaker bit, and the formula for it; a length as a count of cycles; keeping the border colour in bits 0 to 2 from `BORDCR`; a table of notes; `PUSH` and `POP` in a routine called from the middle of the game.
+- **As written.** `step5-sound.asm`, 606 bytes, step 4's parameters plus `quiet` at 50016, entry point 50017; driver `step5-sound.bas` (the border is blue so that damage to it would show); examples `step5-examples.asm` + `step5-examples.bas`.
+- **Tested.** The pitches were checked by recording Fuse's sound with SDL's disk audio driver: 262, 1053, 526 and 131 Hz against Chapter 2's 261.6, 1046.5, 523.3 and 130.8. Counts of notes in a recording matched the driver's counters (25 bat hits, 29 bricks; 21 misses). A note of 7.6 to 11.5 ms plays after the `halt` and ends before the next frame, and the game took 3.00 frames a step, and 1.003 at `speed` 1, with all its sounds; copies with notes of about 38 ms took 3.10. Chapter 2, step 6 took 11.03 frames a step. A note that leaves the border bits at 0 turned the border black, in the examples and in a copy of the game. This corrects the intention above: the machine-code note does stall the loop while it plays, it only fits in the frame.
 
 ### Step 6 — Score, lives and an ending (twin of Chapter 2, step 7)
 

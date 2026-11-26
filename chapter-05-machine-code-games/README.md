@@ -10,5 +10,6 @@ Part A, bat and ball (twins of Chapter 2):
 2. [The bat, read with IN](step2-bat.md) (twin of Chapter 2, step 2) — `step2-bat.asm` + `step2-bat.bas` / `step2-bat.tap`; the keyboard viewer, `step2-examples.asm` + `step2-examples.bas` / `step2-examples.tap`
 3. [The bricks](step3-bricks.md) (twin of Chapter 2, step 3) — `step3-bricks.asm` + `step3-bricks.bas` / `step3-bricks.tap`; the attribute examples, `step3-examples.asm` + `step3-examples.bas` / `step3-examples.tap`
 4. [A little randomness](step4-random.md) (twin of Chapter 2, step 5) — `step4-random.asm` + `step4-random.bas` / `step4-random.tap`; the random number sources compared, `step4-examples.asm` + `step4-examples.bas` / `step4-examples.tap`
+5. [Sound from the speaker](step5-sound.md) (twin of Chapter 2, step 6) — `step5-sound.asm` + `step5-sound.bas` / `step5-sound.tap`; the speaker and border examples, `step5-examples.asm` + `step5-examples.bas` / `step5-examples.tap`
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).
