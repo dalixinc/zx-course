@@ -101,6 +101,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step10-march.asm`, 937 bytes: step 9's parameters plus `mspeed` (50017), `mtime`, `dx`, `frame`, `landed`, `msteps` (50022-50023), entry point 50024; `alive` at 50821, `rows` at 50853; graphics D/E, F/G, H/I; driver `step10-march.bas`; examples `step10-examples.asm` + `step10-examples.bas`.
 - **Tested.** March, step down, frames, shots through the marching block; landed after 244 march steps (230 sideways, 13 down, 1 landing) in 6656 frames and 6655 passes. Columns 0, 1 and 7 emptied: marched from column 0 (`bx` 252) to 31, landed after 324 steps at `mspeed` 5. A march step 0.785 of a frame with no `halt` (Chapter 4: 45 sideways, 54 down); the base 2.008 frames a move while marching (7.1), the shot a step a frame (10); idle pass 0.00588 (4.3), base move 0.0224 (4.6).
 
+### Step 11 — Shot against invader (twin of Chapter 4, step 5)
+
+- **Goal.** A shot that meets a living invader kills it: a 0 in `alive`, a yellow starburst (Chapter 4's UDG P) for `elen` frames, the shot gone. Holes march with the block, the edges come from the living columns, and `WAVE CLEARED` after the last one.
+- **New.** No new instructions. The hit tested both ways (the shot moving onto an invader, and an invader marching onto the shot); a kill is one byte; the explosion as a fourth beat, one at a time, with `erub` drawing again an invader that has marched onto it; `count` adds the table; the shot now leaves from row 1, so it no longer rubs out messages on row 0 (step 10's did). `left` was taken, so the count is `nleft`.
+- **As written.** `step11-hits.asm`, 1102 bytes: step 10's parameters plus `hits`, `nleft`, `elen` (12), `etime`, `erow`, `ecol` (50024 to 50029), entry point 50030; `alive` at 50978; driver `step11-hits.bas`; examples `step11-examples.asm` + `step11-examples.bas`.
+- **Tested.** Hits, a second shot through the hole, the starburst for 12 and for 50 frames; with the `auto` routine, the wave cleared after 97 march steps, 32 hits, 6001 passes in 6002 frames; `WAVE CLEARED` stays whole. No `halt`: idle pass 0.0055 (Chapter 4: 4.7), a missing shot step 0.0286 (9.7), a hit 0.037. Frame budget: with `mspeed` 1, 244 march steps with shots and hits in 2001 passes, 2002 frames, so no pass ran over. A bug found and kept in the lesson: the shot's beat skipped the explosion's.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
