@@ -80,6 +80,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step7-base.asm`, 222 bytes: `halts` (50000), `bspeed` (50001), `moves` (50002), `passes` (50004), `x` (50006), `ptime` (50007), entry point 50008; driver `step7-base.bas`; examples `step7-examples.asm` + `step7-examples.bas`.
 - **Tested.** O, P, both held (no move), Caps Shift with O, the edges, Q; 42 moves in 595 frames and 595 passes. The examples read O, P and Space together (mask `0111`) where `INKEY$` gave `""`. 10000 `rkeys` calls in a loop took 27 frames (188 T-states each); one BASIC `INKEY$` 0.232 frames. With a test routine standing in for the keys: 2.004 frames a move as shipped, 1.004 at `bspeed` 1, 0.0192 with no `halt`, against Chapter 4's 2.4 (3.8 with its delay); an idle pass with no `halt` 0.00464 of a frame.
 
+### Step 8 — One shot (twin of Chapter 4, step 2)
+
+- **Goal.** Chapter 4's shot, UDG B in yellow, fired with Space from row 20, one at a time, while O or P is held.
+- **New.** `INC A` as a test for 255 (the "no shot" row); `CALL NZ`; a second beat in the loop, so the shot (`sspeed`) and the keys (`bspeed`) keep their own speeds; the attribute set per cell as the shot is drawn.
+- **As written.** `step8-shot.asm`, 376 bytes: `halts` (50000), `bspeed` (50001), `sspeed` (50002), `moves` (50003), `passes` (50005), `ssteps` (50007), `shots` (50009), `x` (50010), `ptime` (50011), `stime` (50012), `srow` (50013), `scol` (50014), entry point 50015; driver `step8-shot.bas`; examples `step8-examples.asm` + `step8-examples.bas`.
+- **Tested.** Firing alone, while moving each way, and with O and P cancelling; one shot at a time (a tap during a flight did nothing); 21 steps a shot. With a test routine for the keys: the shot 1.00 frame a step (Chapter 4: 2.9), the base 2.008 frames a move with or without a shot flying (Chapter 4: 2.9 alone, 3.9 together); with no `halt` 0.0248 of a frame a shot pass and 0.0389 a pass with both, about 117 and 100 times as quick. `sspeed` 2 gave 2 frames a step.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
