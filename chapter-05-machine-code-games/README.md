@@ -18,5 +18,6 @@ A summary of Part A, with the timings of all six steps set beside their BASIC tw
 Part B, Invaders in machine code (twins of Chapter 4):
 
 7. [The Invaders base](step7-base.md) (twin of Chapter 4, step 1) — `step7-base.asm` + `step7-base.bas` / `step7-base.tap`; reading several half-rows into one key byte, `step7-examples.asm` + `step7-examples.bas` / `step7-examples.tap`
+8. [One shot](step8-shot.md) (twin of Chapter 4, step 2) — `step8-shot.asm` + `step8-shot.bas` / `step8-shot.tap`; `INC A` as a test for 255 and `CALL NZ`, `step8-examples.asm` + `step8-examples.bas` / `step8-examples.tap`
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).
