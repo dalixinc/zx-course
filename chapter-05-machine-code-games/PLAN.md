@@ -87,6 +87,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step8-shot.asm`, 376 bytes: `halts` (50000), `bspeed` (50001), `sspeed` (50002), `moves` (50003), `passes` (50005), `ssteps` (50007), `shots` (50009), `x` (50010), `ptime` (50011), `stime` (50012), `srow` (50013), `scol` (50014), entry point 50015; driver `step8-shot.bas`; examples `step8-examples.asm` + `step8-examples.bas`.
 - **Tested.** Firing alone, while moving each way, and with O and P cancelling; one shot at a time (a tap during a flight did nothing); 21 steps a shot. With a test routine for the keys: the shot 1.00 frame a step (Chapter 4: 2.9), the base 2.008 frames a move with or without a shot flying (Chapter 4: 2.9 alone, 3.9 together); with no `halt` 0.0248 of a frame a shot pass and 0.0389 a pass with both, about 117 and 100 times as quick. `sspeed` 2 gave 2 frames a step.
 
+### Step 9 — The block of invaders (twin of Chapter 4, step 3)
+
+- **Goal.** 4 rows of 8, Chapter 4's UDGs D, F and H in magenta, cyan and white, still; the shot passes through.
+- **New.** No new instructions. The `alive` table, a byte an invader, as the source of truth; the `rows` table, a graphic address (`dw`) and an ink for each row; drawing invader by invader with `put` and its own attribute; `invat`, from a screen cell back to the block, used to draw an invader again behind the shot (and in step 11 for hits). `r` cannot be a label: it is a register.
+- **As written.** `step9-block.asm`, 615 bytes: step 8's parameters plus `bx` (50015) and `by` (50016), entry point 50017; `alive` at 50523, `rows` at 50555; driver `step9-block.bas`; examples `step9-examples.asm` + `step9-examples.bas`.
+- **Tested.** The block as Chapter 4's; a shot up an invader column, caught in the block, with the invaders behind it drawn again; `invat` and `aliveat` on 9 cells and 4 invaders; `bx`, `by`, `alive` and `rows` poked. The whole block drawn in 0.44 of a frame (Chapter 4: 3.8 as strings, 68 cell by cell); no `halt`: idle pass 0.00535 (2.6), base move 0.0210 (3.4), shot step 0.0305 (5.5).
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
