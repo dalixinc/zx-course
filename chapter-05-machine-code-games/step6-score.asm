@@ -256,6 +256,9 @@ mid:    call turn       ; a middle cell: bounce,
 
 top:    ld a,nwall
         call sound      ; the top edge is a wall
+        call turn       ; dr = -dr: bounce,
+        call nudge      ; and maybe change the sideways step (step 6b:
+        jr cols         ; without it, the wall cannot always be cleared)
 
 flipr:  call turn       ; dr = -dr: bounce
 
