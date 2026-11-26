@@ -45,7 +45,9 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 ### Step 3 — The bricks (twin of Chapter 2, step 3)
 
 - **Goal.** Three rows of coloured bricks, drawn by filling attributes. The ball reads the attribute of the cell ahead, as `ATTR` did, rubs out a brick it hits, and bounces. The ends of the bat steer the ball, as in Chapter 2, step 3.
-- **New.** The attribute address of a cell (`010110TT RRRCCCCC`); reading and writing the attribute byte; a brick wall drawn with a loop.
+- **New.** The attribute address of a cell (`010110TT RRRCCCCC`); reading and writing the attribute byte, with `AND 56` for the paper; a brick wall drawn with a loop; `LD (nn),BC`; looking at the cell ahead before moving, and going round again after a brick; steering from the place on the bat.
+- **As written.** `step3-bricks.asm`, 429 bytes, step 2's parameters with `kills` added at 50007 (the rest move up one), entry point 50015; driver `step3-bricks.bas`; examples `step3-examples.asm` + `step3-examples.bas`, which set the code's attribute addresses and bytes beside `ATTR`.
+- **Tested.** Wall drawn at once; bricks rubbed out and counted; the left and right ends of the bat steer. A pass with no `HALT` took 0.0216 of a frame; Chapter 2, step 3 took 5.5 frames a step without its delay and 43.5 with it.
 
 ### Step 4 — A little randomness (twin of Chapter 2, step 5)
 
