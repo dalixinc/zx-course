@@ -4,7 +4,7 @@ Chapter 2's step 6 gave every bounce a short `BEEP`: the bat low, a wall high, a
 
 The new part is the speaker. In BASIC, `BEEP` is one statement. In machine code there is no such thing: you turn the speaker on and off yourself, with `OUT`, at the rate that gives the note you want. This lesson shows how that is done, how long the note keeps the game waiting, and one mistake that turns the border black and is easy to make.
 
-Chapter 2's step 6 took **11.03 frames a step**, timed for this lesson, with its beeps included. This step's loop takes **3.00 frames a step** as shipped and **1.003** with the ball moving every frame, with its sounds included. A note in this step stalls the game while it plays, as `BEEP` does, but each one lasts 0.4 to 0.6 of a frame, about half as long as Chapter 2's, and it plays in the part of the frame after the loop's `halt`, so the loop keeps its beat.
+Chapter 2's step 6 took **10.04 frames a step**, timed for this lesson, with its beeps included (100 steps in 1004 frames, with the count started after the wall was drawn). This step's loop takes **3.00 frames a step** as shipped and **1.003** with the ball moving every frame, with its sounds included. A note in this step stalls the game while it plays, as `BEEP` does, but each one lasts 0.4 to 0.6 of a frame, about half as long as Chapter 2's, and it plays in the part of the frame after the loop's `halt`, so the loop keeps its beat.
 
 Every program here was assembled with pasmo, cross-checked against z80asm, and run in a 48K emulator before it was shown. The pitches were checked by recording the emulator's sound and measuring it.
 
@@ -708,12 +708,12 @@ Chapter 2's `step6-beep.bas` was timed with one extra line counting steps and a 
 
 | Program | Frames a step | Steps a second |
 |---------|--------------:|---------------:|
-| Chapter 2, step 6, with its delay and beeps | 11.03 (100 steps in 1103 frames) | 4.5 |
+| Chapter 2, step 6, with its delay and beeps | 10.04 (100 steps in 1004 frames) | 5.0 |
 | This step, as shipped (`speed` 3) | 3.00 (789 steps in 2367 frames) | 16.7 |
 | This step, `speed` 1 | 1.003 (1300 steps in 1304 frames) | 49.9 |
 | This step, `speed` 3, notes of about 38 ms | 3.10 (501 steps in 1554 frames) | 16.1 |
 
-This step's loop takes at least a frame for each step, because of the `halt`, so 1 is as fast as it goes. The 11 for BASIC includes the delay loop in line 140, `FOR I=1 TO 10`, and the time for the beeps.
+This step's loop takes at least a frame for each step, because of the `halt`, so 1 is as fast as it goes. The 10 for BASIC includes the delay loop in line 140, `FOR I=1 TO 10`, and the time for the beeps. This lesson first gave 11.03 (1103 frames for 100 steps); that run counted from the start of the program and so included drawing the wall.
 
 The notes themselves, from a BASIC loop of 50 calls. This one is a less direct measure, because the BASIC loop is in it too:
 
