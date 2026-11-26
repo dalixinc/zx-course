@@ -93,7 +93,7 @@ The questions carried forward from Chapters 3 and 4 have defaults, chosen by Qui
 2. Movement is by whole character cells first, for a like-for-like translation. Pixel movement comes later in the chapter, once the cell version of Invaders works.
 3. The keys are the same as before (O and P, and Space to fire), read with `IN` from the keyboard half-rows, so several keys can be down at once.
 4. A Kempston joystick is a later, optional step.
-5. Sound is clicks on the speaker, bit 4 of port 254, so it never stalls the loop.
+5. Sound is clicks on the speaker, bit 4 of port 254. A note written with a delay loop still holds the loop while it plays, as `BEEP` does, so the notes are kept shorter than a frame; step 5 measured it.
 
 The steps:
 
