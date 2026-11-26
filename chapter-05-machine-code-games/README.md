@@ -25,6 +25,7 @@ Part B, Invaders in machine code (twins of Chapter 4):
 12. [Bombs](step12-bombs.md) (twin of Chapter 4, step 6) — `step12-bombs.asm` + `step12-bombs.bas` / `step12-bombs.tap`; a random column, the lowest invader and the cancel test, `step12-examples.asm` + `step12-examples.bas` / `step12-examples.tap`
 13. [Shields](step13-shields.md) (twin of Chapter 4, step 7) — `step13-shields.asm` + `step13-shields.bas` / `step13-shields.tap`; a screen cell to the damage map, and a chip, `step13-examples.asm` + `step13-examples.bas` / `step13-examples.tap`
 14. [The whole game](step14-game.md) (twin of Chapter 4, step 8) — `step14-game.asm` + `step14-game.bas` / `step14-game.tap`; a number in digits, text from the ROM's letters, and each wave's row and speed, `step14-examples.asm` + `step14-examples.bas` / `step14-examples.tap`
+15. [Moving by pixels](step15-pixels.md) — `step15-pixels.asm` + `step15-pixels.bas` / `step15-pixels.tap`; the pixel line address, shifting at run time and in advance, XOR and masks, `step15-examples.asm` + `step15-examples.bas` / `step15-examples.tap`
 
 A summary of Part B, with every Invaders step set beside its BASIC twin in one table, is in [summary-part-b.md](summary-part-b.md).
 

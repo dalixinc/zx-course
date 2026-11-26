@@ -129,6 +129,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step14-game.asm`, 2377 bytes: step 13's parameters plus `score`, `lives`, `wave`, `over`, `rlen`, `rtime`, `quiet`, `mfirst`, `bfirst`, `nlives` (50042 to 50052), entry point 50053; `alive` at 52197; driver `step14-game.bas`, with the game-over screen at line 300; examples `step14-examples.asm` + `step14-examples.bas`.
 - **Tested.** A whole game (auto, seed 77): wave 1 cleared at exactly 640, wave 2 a row lower, out of lives at 1240. A lost base and the next in column 15; both game-over screens; another game from a key. No `halt`: idle 0.0075 (Chapter 4: 6.5), a march row 0.21, a click 0.06 to 0.07 (a `BEEP` 1.2), the score 0.05, the status line 0.4, a new wave 3.8. Frame budget: without the ripple 245 frames for 244 passes, and 48 for 46 on the shield rows; with it, 1013 for 1013 and 189 for 189.
 
+### Step 15 — Moving by pixels
+
+- **Goal.** The base sideways by pixels, the shot and the bombs by pixel lines, on the game of step 14; the block, the shields and the explosions stay cell-based, since pixel invaders need Chapter 6's pre-shifted, masked sprites.
+- **New.** No new instructions. `pixad`, the address of any pixel line from Chapter 3, step 8's bits, with step 8's `nxtdn`; the base shifted at run time with `srl`/`rr` into two bytes (`basex`); everything that moves drawn with XOR; `put` a wrapper that lifts the shot or the bomb off a cell before drawing it; hits by the cell of the shot's top line and the bomb's bottom line, the base hit by pixel overlap, and `ctest` by line overlap. The examples set run-time shifting beside eight copies made in advance, and XOR beside a mask, over a checkerboard.
+- **As written.** `step15-pixels.asm`, 2656 bytes: step 14's parameters plus `px` (120), `pstep` (2), `slines` (4), `dlines` (2) (50053 to 50056), entry point 50057; `bspeed` and `dspeed` now 1; `alive` at 52484; driver `step15-pixels.bas`; examples `step15-examples.asm` + `step15-examples.bas`.
+- **Tested.** A whole game (auto, seed 77): out of lives at 480 on wave 1, 3386 passes in 3417 frames; a test of every cell that should be empty found 0 stray cells in four games, one to wave 2. No `halt`: idle 0.018 (keys every pass), the base drawn 0.02 to 0.05 by its shift, the shot and the bomb 0.01, a march row 0.22. Examples: 510 draws in 25 frames shifted at run time, 11 from the copies. Frame budget: 973 passes in 973 frames from row 1, 181 in 181 on the shield rows.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
@@ -155,7 +162,7 @@ A wrap-up for the whole chapter sets every timing beside its BASIC twin.
 
 ## What this chapter will not do yet
 
-No generic sprite engine, no masked sprites over a background, and no pre-shifted graphics. Those are Chapter 6.
+No generic sprite engine, no masked sprites over a background, and no pre-shifted graphics in the game. Step 15's examples show a pre-shifted copy and a mask for one graphic; the engine that uses them is Chapter 6.
 
 ## Open questions for Dalix
 
