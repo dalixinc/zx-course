@@ -115,6 +115,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step12-bombs.asm`, 1515 bytes: step 11's parameters plus `seed`, `dwait` (50), `dtime`, `dspeed` (4), `dstime`, `brow`, `bcol`, `dead`, `bombs`, `cancels` (50030 to 50039), entry point 50040; `alive` at 51383; driver `step12-bombs.bas`; examples `step12-examples.asm` + `step12-examples.bas`.
 - **Tested.** Bombs in play, the base hit and the game stopping but for Q; a whole wave with a test copy that only counts hits on the base (32 hits, 41 bombs, 2 cancels, 3 base hits, 6001 passes and frames). No `halt`: idle pass 0.0062 (Chapter 4: 6.7), a pass with a bomb step 0.033 (9.0), a shot step with the bomb test 0.0305 (13.6). Frame budget: march, bomb and shot on every pass, 2001 passes in 2002 frames.
 
+### Step 13 — Shields (twin of Chapter 4, step 7, and step 8's wiping)
+
+- **Goal.** Four 3x2 shields on rows 18 and 19 in Chapter 4's columns and shapes, with a damage map, chipped by shots and bombs, and wiped out where invaders are drawn on them.
+- **New.** `DS`. `shat`: screen cell to map byte with `sub`/`cp`, `AND 7` and shifts (the shields are eight columns apart); `shdraw` from a table of pictures by level; `chip` answering in the carry; `stomp` in `dinv`; `dshield` drawing from the same lookup. `shr` and `shl` are pasmo operators, so the names are `shy`, `shx`, `gK`, `gL`.
+- **As written.** `step13-shields.asm`, 1815 bytes: step 12's parameters plus `chips`, `stomps` (50040, 50041), entry point 50042; `shmap` at 51593, `alive` at 51635; driver `step13-shields.bas`; examples `step13-examples.asm` + `step13-examples.bas`.
+- **Tested.** Staged chips by shots, bomb chips, a shot through a hole; a low block wiped all 24 cells; a whole wave (auto, seed 77): 168 march steps, 6001 passes, 6002 frames. No `halt`: idle 0.0062 (Chapter 4: 6.8), a chip 0.015 (a 24-frame pass), a march step 0.88 on the shield rows against 0.83 above. Frame budget: march, bomb and shot every pass, from row 1 (2001 passes, 2002 frames) and all on the shield rows (201, 202): no overrun.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
