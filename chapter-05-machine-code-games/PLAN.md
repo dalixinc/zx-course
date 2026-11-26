@@ -73,6 +73,13 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 
 A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 
+### Step 7 — The Invaders base (twin of Chapter 4, step 1)
+
+- **Goal.** Chapter 4's base, its UDG bytes on row 21 in green, moved a column at a time with O and P.
+- **New.** `IN` with several half-rows chosen at once (A = 0 reads all eight, but keys on the same bit cannot be told apart); `RLCA`; `rkeys`, one byte with a bit each for P, O, Space and Q, from three reads, 150 T-states with its call; O and P held together cancel; a row coloured once through its attributes. Q stops the game, since Space is for the shot.
+- **As written.** `step7-base.asm`, 222 bytes: `halts` (50000), `bspeed` (50001), `moves` (50002), `passes` (50004), `x` (50006), `ptime` (50007), entry point 50008; driver `step7-base.bas`; examples `step7-examples.asm` + `step7-examples.bas`.
+- **Tested.** O, P, both held (no move), Caps Shift with O, the edges, Q; 42 moves in 595 frames and 595 passes. The examples read O, P and Space together (mask `0111`) where `INKEY$` gave `""`. 10000 `rkeys` calls in a loop took 27 frames (188 T-states each); one BASIC `INKEY$` 0.232 frames. With a test routine standing in for the keys: 2.004 frames a move as shipped, 1.004 at `bspeed` 1, 0.0192 with no `halt`, against Chapter 4's 2.4 (3.8 with its delay); an idle pass with no `halt` 0.00464 of a frame.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
