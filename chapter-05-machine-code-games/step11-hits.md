@@ -122,7 +122,7 @@ When `nleft` comes down to 0, `hit` prints `WAVE CLEARED` on row 0. Nothing has 
 
 ### The shot stops at row 1
 
-In testing, `WAVE CLEARED` came up with most of its letters missing: the shots that were still flying went up to row 0 and rubbed out the cells they passed. Step 10's code does the same to `THEY HAVE LANDED`; it was not seen there because no shot was fired over it. Row 0 is for messages, and for the score in step 14, so the shot now leaves from row 1: `cp 1` in place of `and a`, one byte more. The block's top row is never above row 1, so nothing can be missed.
+In testing, `WAVE CLEARED` came up with most of its letters missing: the shots that were still flying went up to row 0 and rubbed out the cells they passed. Step 10's code had the same flaw with `THEY HAVE LANDED`, and has been fixed there too, with `dec a`, which is the same size as the `and a` it replaced, so none of step 10's addresses moved. Row 0 is for messages, and for the score in step 14, so the shot now leaves from row 1: `cp 1` in place of `and a`, one byte more. The block's top row is never above row 1, so nothing can be missed.
 
 ## The listing
 
