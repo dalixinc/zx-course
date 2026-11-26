@@ -108,6 +108,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step11-hits.asm`, 1102 bytes: step 10's parameters plus `hits`, `nleft`, `elen` (12), `etime`, `erow`, `ecol` (50024 to 50029), entry point 50030; `alive` at 50978; driver `step11-hits.bas`; examples `step11-examples.asm` + `step11-examples.bas`.
 - **Tested.** Hits, a second shot through the hole, the starburst for 12 and for 50 frames; with the `auto` routine, the wave cleared after 97 march steps, 32 hits, 6001 passes in 6002 frames; `WAVE CLEARED` stays whole. No `halt`: idle pass 0.0055 (Chapter 4: 4.7), a missing shot step 0.0286 (9.7), a hit 0.037. Frame budget: with `mspeed` 1, 244 march steps with shots and hits in 2001 passes, 2002 frames, so no pass ran over. A bug found and kept in the lesson: the shot's beat skipped the explosion's.
 
+### Step 12 — Bombs (twin of Chapter 4, step 6)
+
+- **Goal.** One bomb at a time, from the lowest living invader of a random living column, every `dwait` frames, falling a row every `dspeed` frames; the base hit ends the game with `YOU ARE HIT`; a shot and a bomb that meet cancel.
+- **New.** No new instructions. Step 6's LFSR and `and 7` for a column; the next living column if it is empty (biased: see the lesson); the lowest living invader from `aliveat`; a bomb hidden behind an invader that marches onto it; `ctest` with one `sub` and `cp 2` for BASIC's `Y=U OR Y=U+1`, answering in the carry; `dead`; `JP` where `JR` no longer reaches. The explosion's beat skipped the bomb's, the same bug as in step 11.
+- **As written.** `step12-bombs.asm`, 1515 bytes: step 11's parameters plus `seed`, `dwait` (50), `dtime`, `dspeed` (4), `dstime`, `brow`, `bcol`, `dead`, `bombs`, `cancels` (50030 to 50039), entry point 50040; `alive` at 51383; driver `step12-bombs.bas`; examples `step12-examples.asm` + `step12-examples.bas`.
+- **Tested.** Bombs in play, the base hit and the game stopping but for Q; a whole wave with a test copy that only counts hits on the base (32 hits, 41 bombs, 2 cancels, 3 base hits, 6001 passes and frames). No `halt`: idle pass 0.0062 (Chapter 4: 6.7), a pass with a bomb step 0.033 (9.0), a shot step with the bomb test 0.0305 (13.6). Frame budget: march, bomb and shot on every pass, 2001 passes in 2002 frames.
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
