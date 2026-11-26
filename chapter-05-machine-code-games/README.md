@@ -20,5 +20,6 @@ Part B, Invaders in machine code (twins of Chapter 4):
 7. [The Invaders base](step7-base.md) (twin of Chapter 4, step 1) — `step7-base.asm` + `step7-base.bas` / `step7-base.tap`; reading several half-rows into one key byte, `step7-examples.asm` + `step7-examples.bas` / `step7-examples.tap`
 8. [One shot](step8-shot.md) (twin of Chapter 4, step 2) — `step8-shot.asm` + `step8-shot.bas` / `step8-shot.tap`; `INC A` as a test for 255 and `CALL NZ`, `step8-examples.asm` + `step8-examples.bas` / `step8-examples.tap`
 9. [The block of invaders](step9-block.md) (twin of Chapter 4, step 3) — `step9-block.asm` + `step9-block.bas` / `step9-block.tap`; the two lookups, `step9-examples.asm` + `step9-examples.bas` / `step9-examples.tap`
+10. [The march](step10-march.md) (twin of Chapter 4, step 4) — `step10-march.asm` + `step10-march.bas` / `step10-march.tap`; the edges and a block off the screen, `step10-examples.asm` + `step10-examples.bas` / `step10-examples.tap`
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).

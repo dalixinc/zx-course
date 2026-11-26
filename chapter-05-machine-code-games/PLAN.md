@@ -94,6 +94,13 @@ A short wrap-up of Part A sets the bat-and-ball timings beside Chapter 2's.
 - **As written.** `step9-block.asm`, 615 bytes: step 8's parameters plus `bx` (50015) and `by` (50016), entry point 50017; `alive` at 50523, `rows` at 50555; driver `step9-block.bas`; examples `step9-examples.asm` + `step9-examples.bas`.
 - **Tested.** The block as Chapter 4's; a shot up an invader column, caught in the block, with the invaders behind it drawn again; `invat` and `aliveat` on 9 cells and 4 invaders; `bx`, `by`, `alive` and `rows` poked. The whole block drawn in 0.44 of a frame (Chapter 4: 3.8 as strings, 68 cell by cell); no `halt`: idle pass 0.00535 (2.6), base move 0.0210 (3.4), shot step 0.0305 (5.5).
 
+### Step 10 — The march (twin of Chapter 4, step 4)
+
+- **Goal.** The block marches sideways, steps down and back at the edges, changes frame each step, and lands with `THEY HAVE LANDED`, on a beat of `mspeed` frames, with the base and the shot unchanged.
+- **New.** No new instructions. A third beat in the loop; moving the whole block in one pass, invader by invader (rub where it was, draw where it is), with no gap; `obx`/`oby` and `where`/`owhere` sharing `wpair`; the edges from `alive` with `or (hl)`; a "negative" `bx` (252) working by wrapping in 8 bits, so `invat` drops its carry tests; `rtype` adding `8*frame`.
+- **As written.** `step10-march.asm`, 937 bytes: step 9's parameters plus `mspeed` (50017), `mtime`, `dx`, `frame`, `landed`, `msteps` (50022-50023), entry point 50024; `alive` at 50821, `rows` at 50853; graphics D/E, F/G, H/I; driver `step10-march.bas`; examples `step10-examples.asm` + `step10-examples.bas`.
+- **Tested.** March, step down, frames, shots through the marching block; landed after 244 march steps (230 sideways, 13 down, 1 landing) in 6656 frames and 6655 passes. Columns 0, 1 and 7 emptied: marched from column 0 (`bx` 252) to 31, landed after 324 steps at `mspeed` 5. A march step 0.785 of a frame with no `halt` (Chapter 4: 45 sideways, 54 down); the base 2.008 frames a move while marching (7.1), the shot a step a frame (10); idle pass 0.00588 (4.3), base move 0.0224 (4.6).
+
 ## Part B — Invaders in machine code (twins of Chapter 4)
 
 The eight steps of Chapter 4, in the same order. Each one times the same jobs as its twin, and the table in Chapter 4's summary is the one to beat.
