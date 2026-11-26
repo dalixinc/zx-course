@@ -13,6 +13,8 @@ Every program is tested in the Fuse emulator (48K) before it is committed.
 - [Chapter 3 wrap-up: BASIC against machine code](chapter-03-machine-code/summary.md)
 - [Chapter 4: Invaders in BASIC](chapter-04-invaders-basic/)
 - [Chapter 4 plan: Invaders in BASIC](chapter-04-invaders-basic/PLAN.md)
+- [Chapter 5: the same games in machine code](chapter-05-machine-code-games/)
+- [Chapter 5 plan: the same games in machine code](chapter-05-machine-code-games/PLAN.md)
 - [Colour reference](colour-reference.md)
 - [Test tools](tools/README.md)
 - [Windows tools](windows-tools/) — pasmo, zmakebas and Fuse, ready to use after a git pull on Windows

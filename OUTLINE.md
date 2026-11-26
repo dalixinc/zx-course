@@ -85,15 +85,21 @@ Movement is by whole character cells. Sound is `BEEP`. The lesson format is the 
 
 ## Chapter 5 — The same games in machine code
 
-Chapter 5 starts with a warm-up: the Chapter 2 bat-and-ball game translated to machine code. That is the course's first real-time game loop (`HALT`, reading the keyboard, moving things, collisions). Then it rebuilds the Chapter 4 Invaders game in machine code, step by step in the same order, so the two versions can be compared for speed and for how the programs are written.
+Chapter 5 starts with a warm-up: the Chapter 2 bat-and-ball game translated to machine code. That is the course's first real-time game loop (`HALT`, reading the keyboard, moving things, collisions). Then it rebuilds the Chapter 4 Invaders game in machine code, step by step in the same order, so the two versions can be compared for speed and for how the programs are written. The plan is in [chapter-05-machine-code-games/PLAN.md](chapter-05-machine-code-games/PLAN.md).
 
-Questions that still need a decision before that chapter is written, carried forward from the Chapter 3 wrap-up:
+The questions carried forward from Chapters 3 and 4 have defaults, chosen by Quintus when Dalix asked him to carry on. They are in the plan, and any of them can be changed:
 
-1. How much BASIC stays around the machine-code games: just the loader and menu, or the score and the screens between games too? The game loop itself has to be machine code.
-2. Movement by whole character cells, as in Chapter 4, or a pixel at a time sideways? Pixels are smoother and lead into Chapter 6, but they are more work.
-3. Where the code lives. 50000 after `CLEAR 49999` leaves about 15K, which should be plenty; the start can move lower if the game grows, as decision 5 in the [Chapter 3 plan](chapter-03-machine-code/PLAN.md) allows.
-4. Whether a Kempston joystick should work as well as the keys (Fuse can emulate one). Chapter 4 already uses O and P, and Space to fire.
-5. Sound. Chapter 4 uses `BEEP`, which stops everything while it plays. Short clicks written straight to the speaker port are the usual answer in a machine-code game, and would be new.
+1. The code lives at 50000, after `CLEAR 49999`, with a small BASIC driver that loads it, pokes its parameters, calls it, and prints the timing. The game loop is always machine code.
+2. Movement is by whole character cells first, for a like-for-like translation. Pixel movement comes later in the chapter, once the cell version of Invaders works.
+3. The keys are the same as before (O and P, and Space to fire), read with `IN` from the keyboard half-rows, so several keys can be down at once.
+4. A Kempston joystick is a later, optional step.
+5. Sound is clicks on the speaker, bit 4 of port 254, so it never stalls the loop.
+
+The steps:
+
+1. Bat and ball: the ball, the bat read with `IN`, the bricks, a little randomness, speaker clicks, then score, lives and an ending (steps 1 to 6, twins of Chapter 2).
+2. Invaders: the base, one shot, the block, the march, hits, bombs, shields, then score, lives, waves and sound (steps 7 to 14, twins of Chapter 4's eight steps).
+3. Moving by pixels (step 15), and a Kempston joystick (step 16, optional).
 
 ---
 
