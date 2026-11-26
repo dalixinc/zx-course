@@ -479,7 +479,7 @@ dinv:   call aliveat    ; A = 1 if it is alive
         ld (hl),a       ; the row's ink, on black paper
         jp put          ; draw it, and put returns
 
-; aliveat: A = the alive byte of invader k in block row r, and HL its
+; aliveat: A = the alive byte of invader icol in block row irow, and HL its
 ; address, alive + 8*irow + icol. Changes DE.
 
 aliveat: ld a,(irow)
@@ -495,7 +495,7 @@ aliveat: ld a,(irow)
         ld a,(hl)
         ret
 
-; where: B = the screen row of invader k in block row r, by + 2*irow,
+; where: B = the screen row of invader icol in block row irow, by + 2*irow,
 ; and C its column, bx + 2*icol. Changes A, HL.
 
 where:  ld a,(irow)
