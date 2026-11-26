@@ -4,6 +4,8 @@ Bat and ball from Chapter 2, then Invaders from Chapter 4, rebuilt in Z80 machin
 
 Each step is a BASIC driver (`.bas`) and the machine code (`.asm`), joined on one tape (`.tap`).
 
-The steps will be listed here as they are written.
+Part A, bat and ball (twins of Chapter 2):
+
+1. [A bouncing ball in machine code](step1-ball.md) (twin of Chapter 2, step 1) — `step1-ball.asm` + `step1-ball.bas` / `step1-ball.tap`; the lesson's small examples, `step1-examples.asm` + `step1-examples.bas` / `step1-examples.tap`
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).

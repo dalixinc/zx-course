@@ -32,7 +32,8 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 
 - **Goal.** The ball moves diagonally one cell at a time, bounces off the four edges of rows 0 to 21, and is drawn just after a `HALT`, once every `speed` frames. Any key returns to BASIC, which prints the steps, the frames and the frames a step.
 - **New.** The screen address of a character cell from its row and column (`010TT000 RRRCCCCC`, built with `AND`, `OR` and three `RRCA`s); drawing a cell by copying eight bytes into the screen with `INC H`; rubbing it out with eight zeros; `HALT` as the beat of a game loop; `ADD A,(HL)`; a step of -1 kept as 255, and `NEG`; one unsigned `CP` that catches both edges; `BIT` and `RES` on the `FLAGS` system variable to see a key press; `equ`.
-- **Program.** `step1-ball.asm` and its driver `step1-ball.bas`.
+- **As written.** `step1-ball.asm`, 156 bytes at 50000, with parameters `speed`, `steps`, `row`, `col`, `dr`, `dc` at 50000 to 50006 and the entry point at 50007; driver `step1-ball.bas`; examples `step1-examples.asm` + `step1-examples.bas`.
+- **Tested.** In Fuse, `speed` 2 gave exactly 2 frames a step (532 steps in 1064 frames), `speed` 1 gave 515 in 516, `speed` 7 gave 94 in 658. With no `HALT` a step took 0.0166 of a frame, about 1160 T-states. Chapter 2's ball, timed the same way, took 7.0 frames a step with `PAUSE 5` and 2.4 without it, about 146 times as long as the machine code.
 
 ### Step 2 — The bat, read with IN (twin of Chapter 2, step 2)
 
