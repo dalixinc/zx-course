@@ -51,8 +51,10 @@ Dalix asked Quintus to carry on and choose sensible defaults for the questions c
 
 ### Step 4 — A little randomness (twin of Chapter 2, step 5)
 
-- **Goal.** The bounce off the middle of the bat or a brick sometimes sends the ball straight up, and a vertical rally is broken, as in Chapter 2.
-- **New.** A small random-number routine; the `R` register, and why it is not random enough alone. Chapter 2's step 4, the user-defined ball, has no twin: the machine-code ball has been its own eight bytes since step 1.
+- **Goal.** The bounce off the middle of the bat or a brick sometimes sends the ball straight up or down (about 1 in 5), and a ball already going straight is always sent to one side, as in Chapter 2.
+- **New.** Three sources of random numbers compared honestly: the R register (`LD A,R`, a counter), `FRAMES` (a clock) and an 8-bit LFSR on a seed (`SRL A`, `JR NC`, `XOR n`); `CP n` as a chance; `AND 1` / `ADD A,A` / `DEC A` for plus or minus one; a subroutine for the bounce. Chapter 2's step 4, the user-defined ball, has no twin: the machine-code ball has been its own eight bytes since step 1.
+- **As written.** `step4-random.asm`, 503 bytes, step 3's parameters plus `seed` at 50015, entry point 50016; driver `step4-random.bas` (pokes `PEEK 23672` as the seed); examples `step4-examples.asm` + `step4-examples.bas`.
+- **Tested.** The LFSR comes back to its seed after 255 calls. A first version with one shift per number chose "straight" 15.0% of the time instead of 19.9%, because small numbers are followed by small numbers; with eight shifts it chose 19.0% and 19.2%. With a screen-wide bat, step 3 stopped at 48 bricks (half the wall) and step 4 passed 48, to 75. Chapter 2, step 5 took 5.9 frames a step without its delay and 49.6 with it; a pass of this step with no `HALT` took 0.0217 of a frame.
 
 ### Step 5 — Speaker clicks (twin of Chapter 2, step 6)
 
