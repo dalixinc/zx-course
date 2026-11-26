@@ -8,7 +8,7 @@ This step is its twin. The wall, the colours, the test and the steering are all 
 2. **`ATTR` is a load.** The code works out the attribute address of the cell ahead and reads the byte there.
 3. **Rubbing a brick out is a store.** Writing 7, black paper and white ink, into its attribute makes it vanish. There are no pixels to clear, because a brick never had any: it is a space with coloured paper.
 
-Chapter 2's loop with no delay took **5.5 frames a step**, timed for this lesson. A pass of this step's loop, with a ball step, the brick test and the keys, takes **0.022 of a frame**.
+Chapter 2's loop with no delay took **4.8 frames a step**, timed for this lesson (200 steps in 965 frames, with the count started after the wall was drawn). A pass of this step's loop, with a ball step, the brick test and the keys, takes **0.022 of a frame**.
 
 Every program here was assembled with pasmo, cross-checked against z80asm, and run in a 48K emulator before it was shown.
 
@@ -560,12 +560,14 @@ Chapter 2's `step3-bricks.bas` was timed as before, with one extra line counting
 
 | Program | Frames a step | Steps a second |
 |---------|--------------:|---------------:|
-| Chapter 2, step 3, with its delay | 43.5 (50 steps in 2175 frames) | 1.1 |
-| Chapter 2, step 3, with no delay | 5.5 (200 steps in 1108 frames) | 9.0 |
+| Chapter 2, step 3, with its delay | 39.1 (50 steps in 1956 frames) | 1.3 |
+| Chapter 2, step 3, with no delay | 4.8 (200 steps in 965 frames) | 10.4 |
 | This step, as shipped (`speed` 3) | 3 (505 steps in 1515 frames) | 16.7 |
 | This step, no `HALT`, ball and keys every pass | 0.0216 (23957 steps in 519 frames) | about 2300 |
 
-The last line was run with `POKE 50000,0: POKE 50001,1: POKE 50002,1: CLS : GO TO 70`, as in step 2. A pass now takes about 1510 T-states, about 170 more than step 2's: the look at the cell ahead, with `attr`, on every step. Chapter 2's loop with no delay grew from 4.1 frames to 5.5 for the same job, mostly the `ATTR` test and the longer program. That is about **255 times as long** as the machine code.
+The last line was run with `POKE 50000,0: POKE 50001,1: POKE 50002,1: CLS : GO TO 70`, as in step 2. A pass now takes about 1510 T-states, about 170 more than step 2's: the look at the cell ahead, with `attr`, on every step. Chapter 2's loop with no delay grew from 4.1 frames to 4.8 for the same job, mostly the `ATTR` test and the longer program. That is about **220 times as long** as the machine code.
+
+*A correction.* This lesson first gave 5.5 frames a step (1108 frames for 200 steps), 43.5 with the delay (2175 frames for 50), and 255 times. Those runs counted from the start of the program, so they included drawing the wall, which takes 150 to 220 frames. The figures above were taken again with the count started after the wall was drawn, in the way the later lessons measure.
 
 ## Line by line
 

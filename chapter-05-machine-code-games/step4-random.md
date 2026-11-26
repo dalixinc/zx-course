@@ -6,7 +6,7 @@ The bat's two end cells still steer, with no chance in them, as in Chapter 2. A 
 
 The new part is the random numbers. BASIC has `RND`. The Z80 has nothing, so we have to make our own, and there is more than one way to do it. This lesson looks at three, measures them, and says plainly what each is good for.
 
-Chapter 2's loop with no delay took **5.9 frames a step**, timed for this lesson. A pass of this step's loop takes **0.0217 of a frame** when no nudge is called, and a nudge adds about 330 T-states, by the instruction tables, about 0.005 of a frame.
+Chapter 2's loop with no delay took **5.1 frames a step**, timed for this lesson (200 steps in 1018 frames, with the count started after the wall was drawn). A pass of this step's loop takes **0.0217 of a frame** when no nudge is called, and a nudge adds about 330 T-states, by the instruction tables, about 0.005 of a frame.
 
 Every program here was assembled with pasmo, cross-checked against z80asm, and run in a 48K emulator before it was shown.
 
@@ -590,12 +590,14 @@ Chapter 2's `step5-random.bas` was timed as before, with one extra line counting
 
 | Program | Frames a step | Steps a second |
 |---------|--------------:|---------------:|
-| Chapter 2, step 5, with its delay | 49.6 (50 steps in 2479 frames) | 1.0 |
-| Chapter 2, step 5, with no delay | 5.9 (200 steps in 1173 frames) | 8.5 |
+| Chapter 2, step 5, with its delay | 44.1 (50 steps in 2205 frames) | 1.1 |
+| Chapter 2, step 5, with no delay | 5.1 (200 steps in 1018 frames) | 9.8 |
 | This step, as shipped (`speed` 3) | 3 | 16.7 |
 | This step, no `HALT`, ball and keys every pass | 0.0217 (23541 steps in 510 frames) | about 2300 |
 
-The last line was typed in after a game, as in steps 2 and 3. The pass with no nudge is as fast as step 3's, 0.0216, because the extra code only runs when a nudge is called, and in this run none was. Chapter 2's loop with no delay is about **270 times as long**. The cost of a nudge was not timed in Fuse. Adding up the instruction times gives about 330 T-states for `rnd` with its call, and about 60 more for the rest of `nudge`, about 0.005 of a frame: a nudge costs about a fifth of a step of the ball.
+The last line was typed in after a game, as in steps 2 and 3. The pass with no nudge is as fast as step 3's, 0.0216, because the extra code only runs when a nudge is called, and in this run none was. Chapter 2's loop with no delay is about **235 times as long**.
+
+*A correction.* This lesson first gave 5.9 frames a step (1173 frames for 200 steps), 49.6 with the delay (2479 for 50), and 270 times. Those runs counted from the start of the program, so they included drawing the wall. The figures above were taken again with the count started after the wall was drawn. The cost of a nudge was not timed in Fuse. Adding up the instruction times gives about 330 T-states for `rnd` with its call, and about 60 more for the rest of `nudge`, about 0.005 of a frame: a nudge costs about a fifth of a step of the ball.
 
 ## Line by line
 
