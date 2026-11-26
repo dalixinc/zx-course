@@ -23,5 +23,6 @@ Part B, Invaders in machine code (twins of Chapter 4):
 10. [The march](step10-march.md) (twin of Chapter 4, step 4) — `step10-march.asm` + `step10-march.bas` / `step10-march.tap`; the edges and a block off the screen, `step10-examples.asm` + `step10-examples.bas` / `step10-examples.tap`
 11. [Shot against invader](step11-hits.md) (twin of Chapter 4, step 5) — `step11-hits.asm` + `step11-hits.bas` / `step11-hits.tap`; a kill and a count on the table, `step11-examples.asm` + `step11-examples.bas` / `step11-examples.tap`
 12. [Bombs](step12-bombs.md) (twin of Chapter 4, step 6) — `step12-bombs.asm` + `step12-bombs.bas` / `step12-bombs.tap`; a random column, the lowest invader and the cancel test, `step12-examples.asm` + `step12-examples.bas` / `step12-examples.tap`
+13. [Shields](step13-shields.md) (twin of Chapter 4, step 7) — `step13-shields.asm` + `step13-shields.bas` / `step13-shields.tap`; a screen cell to the damage map, and a chip, `step13-examples.asm` + `step13-examples.bas` / `step13-examples.tap`
 
 The colour numbers are in the [colour reference](../colour-reference.md). To build a tape and run it in Fuse, see [tools/README.md](../tools/README.md) and [windows-tools/README.md](../windows-tools/README.md).
