@@ -34,6 +34,7 @@ In steps 5 and 6 the BASIC twin has its short delay, `FOR I=1 TO 10`, and the be
 - **A sound that is a delay loop stalls the loop.** It is not a way to play sound "without stalling". It is a way to stall for 10 ms rather than 20, and to know exactly how long. A note longer than a frame loses beats (3.10 frames a step instead of 3.00 in a test).
 - **The screen is the data.** The brick test reads the attribute of the cell ahead, as Chapter 2's `ATTR` did. The status line works for the same reason it did in BASIC: row 0 is made a ceiling.
 - **Randomness has to be measured in the use it is put to.** An LFSR with one shift per number was biased (15.0% where 19.9% was meant); with eight shifts it was close. It is still not random: a wide bat fell onto a repeating path in step 4, and again in step 6, with 15 bricks left.
+- **A path that repeats is not always the generator's fault.** Step 6b found that a ball can change the parity of `row + col` only on a straight run of odd length, and with no nudge at the ceiling those runs could only start at a brick on row 4. A 16-bit generator did not help (9 seeds of 255 cleared the wall in a model, against 5); a nudge at the ceiling did (255 of 255). With it, a screen-wide bat in Fuse cleared all 96 bricks in 6444 steps, 19355 frames, 6 minutes 27 seconds at `speed` 3, the same step count the model gave for that seed.
 - **The ROM is worth using for text.** Its print routine was 5 times as quick as BASIC for a character and 3.6 times for the status line, and it is already written. Our own print, from the character set, is faster again and does less.
 - **The border is a side effect of the speaker.** Port 254 is one byte with both in it. Writing only the speaker bit turns the border black, and `BORDCR` goes on saying the old colour.
 
@@ -42,6 +43,7 @@ In steps 5 and 6 the BASIC twin has its short delay, `FOR I=1 TO 10`, and the be
 - Step 2's bat-drawing routine put part of the bat on row 0 until `put`'s register was saved. It is in the lesson.
 - Step 5 first said a note "never stalls the game". It does, and it fits in a frame. The plan, the outline and the lesson now say so. Chapter 4's summary still says "sound that does not stall the loop", and will want the same change.
 - Steps 3, 4 and 5 first gave Chapter 2's timings with the drawing of the wall counted in. Step 6 re-timed them and changed the figures and the ratios.
+- Step 6 first said the whole wall could not be cleared by a wide bat. Step 6b added a nudge at the ceiling, three instructions, and it can (see the step 6 lesson, "Step 6b"). The game is 808 bytes, not 800, and the labels after `top` moved by 8; the timings did not change.
 
 ## What Part B takes from here
 

@@ -4,6 +4,8 @@ Chapter 2's step 7 turned the bat and ball into a game that can be won or lost: 
 
 What is new is printing. The loop has been silent on the screen so far, except for the ball, the bat and the bricks, which are all drawn by copying bytes. A score is text, and text means digits. This lesson looks at two ways to print from machine code, the ROM's and our own, measures both, and says which the game uses and why.
 
+Step 6b, a later fix, added three instructions so that the whole wall can be cleared; the section on it explains why the first version could not.
+
 It also decides which parts stay in BASIC. The game itself, with its score and lives, runs in machine code. The two ending screens, with their tunes, are BASIC: nothing is moving at that point, a tune that stalls the program does no harm, and the screens are easier to change in BASIC.
 
 Chapter 2's step 7 took **10.0 frames a step** with nothing happening, and 10.75 a step over 40 steps with two misses in them, timed for this lesson (the count started after the wall was drawn). This step's loop takes **3.00 frames a step** as shipped, and **1.004** with the ball moving every frame, with its sounds and its status line included. With the `halt` taken out it took **0.068 of a frame** a step, and that figure has 243 bat notes, 91 bricks and every status line in it.
@@ -174,6 +176,40 @@ noball: ld a,(state)    ; is the game over, or won?
 ```
 
 0 is a game being played, or one stopped with Space, 1 is no lives and 2 is no bricks. BASIC reads it after `RANDOMIZE USR` returns. The driver's lines 140 to 170 do the choosing, and the screens are Chapter 2's lines 650 to 780, with `GO TO 60` in place of `RUN`: `RUN` would load the code again.
+
+### Step 6b: a nudge at the ceiling, so the whole wall can go
+
+The first version of this step could not clear the whole wall with a bat the width of the screen: the ball took most of the bricks and then went round the same path for ever. It looked like the generator repeating, but a 16-bit generator, with a period of thousands in place of 255, did not cure it. The cause is simpler, and it is in the paths the ball can take.
+
+Count `row + col` for the ball. A diagonal step changes the row by 1 and the column by 1, so it changes `row + col` by 0 or 2: it stays odd, or it stays even. Only a straight step, with `dc` 0, changes it by 1. With a bat across the screen, every bat hit is on row 20, so the hits can be sorted by the column being odd or even. To get from a hit on an even column to a hit on an odd one, the ball needs an odd number of straight steps in between. A straight run that starts at the bat, goes up and comes back to the bat is always an even number of steps, the same distance each way. The only odd ones started at a brick on row 4, whose row has the other parity. Once row 4 had gaps, the ball was stuck on one parity, and the bricks of the other parity, the ones it could only reach from there, were out of reach for ever. That is the 15 bricks left at 810.
+
+The fix is to give the ceiling a nudge too. A straight run that starts at the ceiling on row 1 and comes down to row 20 is 19 steps, an odd number, so the ball can now change parity at any time, without the wall's help. That is three instructions at `top`:
+
+```
+top:    ld a,nwall
+        call sound      ; the top edge is a wall
+        call turn       ; dr = -dr: bounce,
+        call nudge      ; and maybe change the sideways step
+        jr cols
+```
+
+| Instruction | Bytes | T-states |
+|-------------|-------|---------:|
+| `call nudge` | CD nn nn | 17 |
+| `jr cols` | 18 dd | 12 |
+
+`call turn` was the instruction at `flipr` that `top` used to fall into. It is now called at `top` itself, and `jr cols` jumps past `flipr`. The cost is the time of one `nudge`, a few hundred T-states, once on each visit to the ceiling.
+
+The fix was found with a model of the step routine in Python, which plays a game with a screen-wide bat in a fraction of a second. On each of the 255 seeds, for up to 100000 steps:
+
+| Version | Seeds that cleared the wall | Steps to clear it: least, middle, most |
+|---------|----------------------------:|----------------------------------------|
+| The first version, 8-bit generator | 5 of 255 | |
+| The first version with a 16-bit generator | 9 of 255 | |
+| The ceiling nudge, 8-bit generator, as shipped | 255 of 255 | 2758, 4832, 11786 |
+| The ceiling nudge, 16-bit generator | 255 of 255 | 2697, 4911, 16329 |
+
+The generator stays as it was, since the longer one makes no difference. In Fuse the game on seed 155 cleared the wall in 6444 steps, and the model, given seed 155, said 6444 steps too, so the model and the machine code play the same game. Chapter 2's BASIC game has the same ceiling with no nudge, and the same trap.
 
 ## The listing
 
@@ -438,6 +474,9 @@ mid:    call turn       ; a middle cell: bounce,
 
 top:    ld a,nwall
         call sound      ; the top edge is a wall
+        call turn       ; dr = -dr: bounce,
+        call nudge      ; and maybe change the sideways step (step 6b:
+        jr cols         ; without it, the wall cannot always be cleared)
 
 flipr:  call turn       ; dr = -dr: bounce
 
@@ -765,7 +804,7 @@ solid:  db 255,255,255,255,255,255,255,255 ; one cell of the bat
         end
 ```
 
-It is 800 bytes, 50000 to 50799. pasmo's listing puts `start` at 50022, `loop` at 50127, `keys` at 50177, `step` at 50251, `mid` at 50320, `top` at 50328, `cols` at 50336, `miss` at 50424, `scored` at 50450, `lost` at 50474, `status` at 50488, `pstr` at 50521, `pnum` at 50529, `digit` at 50564, `turn` at 50604, `nudge` at 50612, `rnd` at 50640, `sound` at 50657, `delay` at 50711, `sounds` at 50719, `put` at 50731, `cell` at 50743 and `attr` at 50758.
+It is 808 bytes, 50000 to 50807. pasmo's listing puts `start` at 50022, `loop` at 50127, `keys` at 50177, `step` at 50251, `mid` at 50320, `top` at 50328, `cols` at 50344, `miss` at 50432, `scored` at 50458, `lost` at 50482, `status` at 50496, `pstr` at 50529, `pnum` at 50537, `digit` at 50572, `turn` at 50612, `nudge` at 50620, `rnd` at 50648, `sound` at 50665, `delay` at 50719, `sounds` at 50727, `put` at 50739, `cell` at 50751 and `attr` at 50766. (The first version of this step was 800 bytes; step 6b, below, added the three instructions at `top`.)
 
 The BASIC driver, `step6-score.bas`. The entry point is 50022. After the game it reads `state`, the score, the steps and the frames, and chooses what to show:
 
@@ -848,12 +887,13 @@ The tape was loaded in a 48K Fuse at normal speed.
 
 - **The screen.** `step6-score.png` is a game in progress, with `SCORE 0` on the left and `LIVES 2` on the right, the wall on rows 3 to 5 and the ball below it. The status line is drawn in the ROM's colours, white on black.
 - **Game over.** With no key held, the ball missed three times, and the BASIC screen came up: `GAME OVER`, `SCORE 0` and the prompt (`step6-score-over.png`). A key press started a new game, with the wall redrawn, `SCORE 0` and three lives, and the lives came down again as before.
-- **A win.** The wall of 96 bricks could not be cleared in a test, and the reason is below, so the win was tested with a copy that counted the wall as 5 bricks and a bat as wide as the screen. After 5 bricks the game returned, and BASIC showed `WELL DONE` and `SCORE 50` (`step6-score-win.png`). A key press started another game, with the whole wall back and `LIVES 3`, and the same copy won again with 50.
+- **A win, with a small wall.** Before step 6b, the win was tested with a copy that counted the wall as 5 bricks and had a bat as wide as the screen. After 5 bricks the game returned, and BASIC showed `WELL DONE` and `SCORE 50` (`step6-score-win.png`). A key press started another game, with the whole wall back and `LIVES 3`, and the same copy won again with 50.
 - **The count.** With a screen-wide bat, a game stopped with Space after 5160 frames had 61 bricks gone, `SCORE 610`, `LEFT 35` and 53 bat hits. Ten times the bricks is the score, and 96 less the bricks is what is left (`step6-score-result.png`; `step6-score-holes.png` is the wall in the same game). A copy with `nlives` set to 5 and `points` to 25 started with `LIVES 5`, and after 11 bricks had `SCORE 275`.
-- **Why the whole wall was not cleared.** The same wide-bat game, with no `halt`, took 91 bricks in one run, and in two runs on another seed it stopped at 810, with 15 bricks left, the same screen both times, after 60 and 100 seconds. The ball had fallen onto a path that repeats, which is what step 4 said about a generator on a seed. With a player and a bat that moves, it does not happen.
+- **Why the first version could not clear the whole wall.** The same wide-bat game, with no `halt`, took 91 bricks in one run, and in two runs on another seed it stopped at 810, with 15 bricks left, the same screen both times, after 60 and 100 seconds. Step 6b, below, found the reason and fixed it.
+- **The whole wall, after step 6b.** A copy with a bat the width of the screen (`batw` 32, `bat` 0), at `speed` 3 as shipped, and the driver printing the steps, the frames and the seed, cleared all 96 bricks. BASIC showed `WELL DONE`, `SCORE 960` and `STEPS 6444 FRAMES 19355 SEED 155` (`step6-score-win-full.png`). 19355 frames is 6 minutes 27 seconds. The Python model below, given seed 155, also won in exactly 6444 steps.
 - **Nothing lost, nearly.** At `speed` 3 a game of 1718 steps, 61 bricks and every status line took 5160 frames, 3.0035 a step, 6 frames more than 3 a step. At `speed` 1, 2046 steps with 60 bricks took 2055 frames, **1.004** a step: 9 frames over, for 60 bricks and 61 bat hits, with a status line for each brick. A brick costs about 18 ms, a note and a status line, so it fits in a frame only just, and now and then a note and a status line on the same step spill into the next one.
 
-pasmo and z80asm gave the same 800 bytes for `step6-score.asm`, and the same non-zero bytes for `step6-examples.asm`: pasmo pads the gaps between its `org`s with zeros, z80asm does not.
+pasmo and z80asm gave the same 808 bytes for `step6-score.asm`, and the same non-zero bytes for `step6-examples.asm`: pasmo pads the gaps between its `org`s with zeros, z80asm does not.
 
 ## The timing, against BASIC
 
@@ -899,6 +939,7 @@ The parts that are new since step 5:
 - **`start`** sets `state`, `score`, `lives` and `bleft`, opens channel 2 with `chanopen` and prints the status line.
 - **`noball`** in the loop returns to BASIC if `state` is not 0.
 - **`step`**: the row 0 ceiling, with `jr z,top`.
+- **`top`** (step 6b): bounces and calls `nudge`, as the middle of the bat and a brick do.
 - **The brick** calls `scored` after its note.
 - **`miss`** calls `lost` after its note, and starts the ball again from row 6.
 - **`scored`** adds `points` to `score`, takes one from `bleft`, and sets `state` to 2 when it reaches 0.
@@ -911,7 +952,7 @@ The parts that are new since step 5:
 
 - **A brick can cost a frame.** The note and the status line together take about 18 ms. At `speed` 1 it cost 9 frames in 2046 steps.
 - **The lives are one digit.** `status` adds `'0'` to the byte, so more than 9 lives would print a wrong character. The score is a 16-bit number and `pnum` takes it up to 65535.
-- **The wall in the wide-bat test cannot be cleared.** A generator on a seed, with a bat that does not move, can fall onto a path that repeats.
+- **The whole wall takes a while.** With a screen-wide bat and nobody playing, it took 6444 steps, six and a half minutes at `speed` 3. The last few bricks take the longest, since the ball has to find them by chance. In the model, the slowest of the 255 seeds took 11786 steps, about 12 minutes.
 - **The tunes are BASIC `BEEP`s.** They stall BASIC, which is idle, and the machine code is not running, so there is nothing to lose.
 - **There is no high score.**
 - **The same seed each time in an emulator.** The seed is the low byte of `FRAMES` when the tape has loaded, as in step 4, and in an emulator that is the same each run.
@@ -922,4 +963,5 @@ Each of these was tried in Fuse.
 
 - More lives and bigger points: change `nlives` to 5 and `points` to 25 and build it again. The game started with `LIVES 5`, and after 11 bricks had `SCORE 275`.
 - A win to see: change `nbricks` to 5, and give the driver a bat the width of the screen by changing `batw` to 32 and the `bat` byte to 0. After 5 bricks the game ends with `WELL DONE` and `SCORE 50`.
+- The whole wall, quicker: keep `batw` 32 and `bat` 0 with all 96 bricks, and in the driver set `speed` to 1 (`POKE 50001,1`) and the seed to 156, with line 62 as `62 LET Q=156: POKE 50015,Q`. To see the count, add `7 REM Q=the seed` and `405 PRINT AT 12,0;"STEPS ";S;" FRAMES ";F;" SEED ";Q`. It cleared all 96 bricks and showed `WELL DONE`, `SCORE 960` and `STEPS 3404 FRAMES 3426 SEED 156`: 68.5 seconds, 1.006 frames a step. The model said 3404 steps for seed 156 too.
 - Run `step6-examples.tap` and read the table of times at the bottom of its screen (`step6-examples.png`): it is the table in this lesson.

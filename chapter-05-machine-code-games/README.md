@@ -11,7 +11,7 @@ Part A, bat and ball (twins of Chapter 2):
 3. [The bricks](step3-bricks.md) (twin of Chapter 2, step 3) — `step3-bricks.asm` + `step3-bricks.bas` / `step3-bricks.tap`; the attribute examples, `step3-examples.asm` + `step3-examples.bas` / `step3-examples.tap`
 4. [A little randomness](step4-random.md) (twin of Chapter 2, step 5) — `step4-random.asm` + `step4-random.bas` / `step4-random.tap`; the random number sources compared, `step4-examples.asm` + `step4-examples.bas` / `step4-examples.tap`
 5. [Sound from the speaker](step5-sound.md) (twin of Chapter 2, step 6) — `step5-sound.asm` + `step5-sound.bas` / `step5-sound.tap`; the speaker and border examples, `step5-examples.asm` + `step5-examples.bas` / `step5-examples.tap`
-6. [Score, lives and an ending](step6-score.md) (twin of Chapter 2, step 7) — `step6-score.asm` + `step6-score.bas` / `step6-score.tap`; printing from machine code, `step6-examples.asm` + `step6-examples.bas` / `step6-examples.tap`
+6. [Score, lives and an ending](step6-score.md) (twin of Chapter 2, step 7) — `step6-score.asm` + `step6-score.bas` / `step6-score.tap`; printing from machine code, `step6-examples.asm` + `step6-examples.bas` / `step6-examples.tap`. Step 6b, a nudge at the ceiling so that the whole wall can be cleared, is in the same lesson.
 
 A summary of Part A, with the timings of all six steps set beside their BASIC twins, is in [summary-part-a.md](summary-part-a.md).
 
